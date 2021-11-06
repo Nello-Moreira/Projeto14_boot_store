@@ -15,7 +15,7 @@ npm i
 -   Run on terminal: (at project's root directory)
 
 ```
- node config.js
+ node ./src/config.js
 ```
 
 This will create a production, a development and a test database and envs variables. It will also create a local user role for postgres database, if it doesn't exist.
