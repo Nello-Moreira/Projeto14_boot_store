@@ -1,0 +1,38 @@
+{
+	"name": "server_template",
+	"type": "module",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "NODE_ENV=production node ./src/index.js",
+		"start:development": "NODE_ENV=development nodemon ./src/index.js",
+		"start:test_driven": "NODE_ENV=test npx jest --watch",
+		"test": "NODE_ENV=test npx jest"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Nello-Moreira/server_template.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Nello-Moreira/server_template/issues"
+	},
+	"homepage": "https://github.com/Nello-Moreira/server_template#readme",
+	"dependencies": {
+		"@babel/plugin-transform-runtime": "^7.15.8",
+		"@babel/preset-env": "^7.15.8",
+		"babel-jest": "^27.3.1",
+		"cors": "^2.8.5",
+		"dotenv": "^10.0.0",
+		"express": "^4.17.1",
+		"faker": "^5.5.3",
+		"jest": "^27.3.1",
+		"joi": "^17.4.2",
+		"pg": "^8.7.1",
+		"readline-sync": "^1.4.10",
+		"supertest": "^6.1.6"
+	}
+}

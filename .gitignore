@@ -1,0 +1,7 @@
+# dependencies
+/node_modules
+
+# environments
+.env
+.env.test
+.env.development
