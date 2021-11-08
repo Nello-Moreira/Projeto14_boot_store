@@ -9,6 +9,7 @@ describe('get /products', () => {
 
 	afterEach(async () => {
 		await insertProduct();
+		await insertProduct();
 	});
 
 	afterAll(async () => {
@@ -31,5 +32,7 @@ describe('get /products', () => {
 		expect(result.body[0]).toHaveProperty('color_id');
 		expect(result.body[0]).toHaveProperty('image_url');
 		expect(result.body[0]).toHaveProperty('category_id');
+		expect(result.body[0]).toHaveProperty('count');
+		expect(result.body[1]).not.toHaveProperty('count');
 	});
 });
