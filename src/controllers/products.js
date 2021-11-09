@@ -7,8 +7,9 @@ const productsRoute = '/products';
 async function getProducts(req, res) {
 	const { page } = req.query;
 
+	const productsPerPage = 16;
 	try {
-		const offset = 16 * (page - 1) || 0;
+		const offset = productsPerPage * (page - 1) || 0;
 		const products = await queryProducts(offset);
 		if (products.rowCount) {
 			const count = await queryCount();
