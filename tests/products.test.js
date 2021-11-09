@@ -30,11 +30,10 @@ describe('get /products', () => {
 	it('returns 200 and a product array when there are products', async () => {
 		const result = await supertest(server).get('/products');
 		expect(result.status).toEqual(200);
-		expect(result.body[0]).toHaveProperty('uuid');
-		expect(result.body[0]).toHaveProperty('name');
-		expect(result.body[0]).toHaveProperty('price');
-		expect(result.body[0]).toHaveProperty('image_url');
-		expect(result.body[0]).toHaveProperty('count');
-		expect(result.body[1]).not.toHaveProperty('count');
+		expect(result.body).toHaveProperty('count');
+		expect(result.body.products[0]).toHaveProperty('uuid');
+		expect(result.body.products[0]).toHaveProperty('name');
+		expect(result.body.products[0]).toHaveProperty('price');
+		expect(result.body.products[0]).toHaveProperty('image_url');
 	});
 });
