@@ -1,6 +1,11 @@
 import supertest from 'supertest';
 import server from '../src/server.js';
 import { deleteProducts, insertProduct } from './factories/productsFactory.js';
+import endConnection from '../src/helpers/endConnection.js';
+
+afterAll(() => {
+	endConnection();
+});
 
 describe('get /products', () => {
 	beforeAll(async () => {
