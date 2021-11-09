@@ -1,24 +1,51 @@
 import supertest from 'supertest';
 import server from '../src/server.js';
-import { deleteProducts, insertProduct } from './factories/productsFactory.js';
 import endConnection from '../src/helpers/endConnection.js';
+
+import {
+	insertCategory,
+	deleteAllCategories,
+} from '../src/data/categoriesTable.js';
+import { insertColor, deleteAllColors } from '../src/data/colorsTable.js';
+import { insertProduct, deleteAllProducts } from '../src/data/productsTable.js';
+import categoryProducts from '../src/controllers/categoryProducts.js';
+
+import categoryFactory from './factories/categoryFactory.js';
+import colorFactory from './factories/colorFactory.js';
+import productFactory from './factories/productFactory.js';
 
 afterAll(() => {
 	endConnection();
 });
 
 describe('get /products', () => {
+	const fakeColor = colorFactory();
+	const fakeCategory = categoryFactory();
+
+	let fakeProduct;
+	let fakeProduct2;
+
 	beforeAll(async () => {
-		await deleteProducts();
+		await deleteAllProducts();
+		await deleteAllCategories();
+		await deleteAllColors();
+
+		fakeCategory.id = (await insertCategory(fakeCategory.name)).rows[0].id;
+		fakeColor.id = (await insertColor(fakeColor.name)).rows[0].id;
 	});
 
 	afterEach(async () => {
-		await insertProduct();
-		await insertProduct();
+		fakeProduct = productFactory(fakeColor.id, fakeCategory.id);
+		fakeProduct2 = productFactory(fakeColor.id, fakeCategory.id);
+
+		await insertProduct(fakeProduct);
+		await insertProduct(fakeProduct2);
 	});
 
 	afterAll(async () => {
-		await deleteProducts();
+		await deleteAllProducts();
+		await deleteAllCategories();
+		await deleteAllColors();
 	});
 
 	it('returns 200 and an empty array when there are no products', async () => {
