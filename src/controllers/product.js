@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 import { internalErrorResponse } from '../helpers/helpers.js';
-import { queryProductById } from '../data/productsQuery.js';
+import { queryProductById } from '../data/productsTable.js';
 
 const productRoute = '/products/:id';
 
