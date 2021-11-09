@@ -11,4 +11,8 @@ function queryCount() {
 	return connection.query('SELECT COUNT(id) FROM products;');
 }
 
-export { queryProducts, queryCount };
+function queryProductById(uuid) {
+	return connection.query('SELECT * FROM products WHERE uuid = $1', [uuid]);
+}
+
+export { queryProducts, queryCount, queryProductById };

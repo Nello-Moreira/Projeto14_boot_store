@@ -14,7 +14,6 @@ describe('get /products', () => {
 
 	afterEach(async () => {
 		await insertProduct();
-		await insertProduct();
 	});
 
 	afterAll(async () => {
@@ -31,6 +30,7 @@ describe('get /products', () => {
 		const result = await supertest(server).get('/products');
 		expect(result.status).toEqual(200);
 		expect(result.body).toHaveProperty('count');
+		expect(result.body.products[0]).toHaveProperty('id');
 		expect(result.body.products[0]).toHaveProperty('uuid');
 		expect(result.body.products[0]).toHaveProperty('name');
 		expect(result.body.products[0]).toHaveProperty('price');

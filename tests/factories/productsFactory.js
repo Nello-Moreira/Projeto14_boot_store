@@ -14,17 +14,17 @@ const product = {
 
 async function deleteProducts() {
 	await connection.query('DELETE FROM products;');
-	await connection.query('DELETE FROM categories;');
 	await connection.query('DELETE FROM colors;');
+	await connection.query('DELETE FROM categories;');
 }
 
 async function insertProduct() {
 	await createColor();
 	await createCategory();
-	await connection.query(
+	const result = await connection.query(
 		`INSERT INTO products 
 		(uuid, name, description, price, color_id, image_url, category_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+		VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING uuid;`,
 		[
 			product.uuid,
 			product.name,
@@ -35,6 +35,7 @@ async function insertProduct() {
 			product.category_id,
 		]
 	);
+	return result.rows[0].uuid;
 }
 
 async function createColor() {
@@ -51,4 +52,12 @@ async function createCategory() {
 	product.category_id = Number(result.rows[0].id);
 }
 
-export { deleteProducts, insertProduct };
+function generateUuid() {
+	return faker.datatype.uuid();
+}
+
+function generateString() {
+	return faker.datatype.string(10);
+}
+
+export { deleteProducts, insertProduct, generateUuid, generateString };
