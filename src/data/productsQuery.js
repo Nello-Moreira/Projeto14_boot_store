@@ -2,7 +2,7 @@ import connection from './connection.js';
 
 function queryProducts(offset) {
 	return connection.query(
-		'SELECT uuid, name, price, image_url FROM products OFFSET $1 LIMIT 16;',
+		'SELECT id, uuid, name, price, image_url FROM products OFFSET $1 LIMIT 16;',
 		[offset]
 	);
 }
