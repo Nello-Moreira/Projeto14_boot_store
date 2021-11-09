@@ -7,8 +7,8 @@
   "scripts": {
     "start": "NODE_ENV=production node ./src/index.js",
     "start:development": "NODE_ENV=development nodemon ./src/index.js",
-    "start:test_driven": "NODE_ENV=test npx jest --watch",
-    "test": "NODE_ENV=test npx jest"
+    "start:test_driven": "NODE_ENV=test npx jest --watch -i",
+    "test": "NODE_ENV=test npx jest -i"
   },
   "repository": {
     "type": "git",
@@ -43,6 +43,8 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "^2.25.2",
     "husky": "7.0.4",
+    "nodemon": "^2.0.14",
+    "ntl": "^5.1.0",
     "prettier": "2.4.1"
   }
 }
