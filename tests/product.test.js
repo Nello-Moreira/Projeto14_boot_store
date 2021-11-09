@@ -70,8 +70,8 @@ describe('get /products/:id', () => {
 		expect(result.body).toHaveProperty('category_id');
 	});
 
-	it('returns 500 when a non-uuid type is passed', async () => {
+	it('returns 400 when a non-uuid type is passed', async () => {
 		const result = await supertest(server).get(`/products/${nonUuid}`);
-		expect(result.status).toEqual(500);
+		expect(result.status).toEqual(400);
 	});
 });
