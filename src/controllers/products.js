@@ -9,7 +9,7 @@ async function getProducts(req, res) {
 	try {
 		const offset = 16 * (page - 1) || 0;
 		const products = await connection.query(
-			'SELECT * FROM products OFFSET $1 LIMIT 16;',
+			'SELECT uuid, name, price, image_url FROM products OFFSET $1 LIMIT 16;',
 			[offset]
 		);
 		if (products.rowCount) {

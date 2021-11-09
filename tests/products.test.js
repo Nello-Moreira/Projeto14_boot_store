@@ -27,11 +27,8 @@ describe('get /products', () => {
 		expect(result.status).toEqual(200);
 		expect(result.body[0]).toHaveProperty('uuid');
 		expect(result.body[0]).toHaveProperty('name');
-		expect(result.body[0]).toHaveProperty('description');
 		expect(result.body[0]).toHaveProperty('price');
-		expect(result.body[0]).toHaveProperty('color_id');
 		expect(result.body[0]).toHaveProperty('image_url');
-		expect(result.body[0]).toHaveProperty('category_id');
 		expect(result.body[0]).toHaveProperty('count');
 		expect(result.body[1]).not.toHaveProperty('count');
 	});
