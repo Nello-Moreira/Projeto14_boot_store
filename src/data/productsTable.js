@@ -1,8 +1,14 @@
 import dbConnection from './connection.js';
 
+import { productsPerPage } from '../helpers/helpers.js';
+
 function queryProducts(offset) {
 	return dbConnection.query(
-		'SELECT id, uuid, name, price, image_url FROM products OFFSET $1 LIMIT 16;',
+		`SELECT
+		uuid as id, name, price, image_url
+		FROM products
+		OFFSET $1
+		LIMIT ${productsPerPage};`,
 		[offset]
 	);
 }
@@ -12,15 +18,22 @@ function queryCount() {
 }
 
 function queryProductById(uuid) {
-	return dbConnection.query('SELECT * FROM products WHERE uuid = $1', [uuid]);
+	return dbConnection.query(
+		`
+	SELECT 
+	uuid AS id, name, description, price, color_id, image_url, category_id
+	FROM products
+	WHERE uuid = $1`,
+		[uuid]
+	);
 }
 
-const insertProduct = async (product) => {
-	const result = await dbConnection.query(
+const insertProduct = (product) =>
+	dbConnection.query(
 		`
     INSERT INTO products
     (uuid, name, description, price, color_id, image_url, category_id)
-    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING uuid;`,
+    VALUES ($1, $2, $3, $4, $5, $6, $7);`,
 		[
 			product.uuid,
 			product.name,
@@ -31,8 +44,6 @@ const insertProduct = async (product) => {
 			product.category_id,
 		]
 	);
-	return result.rows[0].uuid;
-};
 
 const deleteAllProducts = () => dbConnection.query('DELETE FROM products;');
 
