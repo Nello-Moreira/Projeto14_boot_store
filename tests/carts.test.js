@@ -84,6 +84,7 @@ describe('post /carts/:id', () => {
 			.post(`/carts/${fakeCart.uuid}`)
 			.send(fakeCartProduct)
 			.set('Authorization', `Bearer ${incorrectToken}`);
+		expect(result.status).toEqual(401);
 	});
 
 	it('returns 400 when an incorrect product is added to the cart', async () => {
