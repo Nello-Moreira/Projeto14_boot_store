@@ -10,18 +10,35 @@ import {
 	categoryProductsCount,
 } from '../data/categoriesTable.js';
 
+import pageSchema from '../validations/pageNumberValidation.js';
+import categoryNameSchema from '../validations/categoryNameValidation.js';
+
 const route = '/category/:name';
 
 const getCategoryProducts = async (request, response) => {
 	const categoryName = request.params.name;
 	const { page } = request.query;
 
+	const pageValidationError = pageSchema.validate({ page }).error;
+
+	if (pageValidationError) {
+		return response.status(400).send(pageValidationError.message);
+	}
+
+	const categoryNameValidationError = categoryNameSchema.validate({
+		categoryName,
+	}).error;
+
+	if (categoryNameValidationError) {
+		return response.status(400).send(categoryNameValidationError.message);
+	}
+
 	try {
 		const categoryExists = await checkIfCategoryExists(categoryName);
 
 		if (!categoryExists) {
 			return response
-				.status(400)
+				.status(404)
 				.send("The requested category doesn't exist");
 		}
 
