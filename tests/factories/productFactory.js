@@ -16,9 +16,8 @@ function uuidFactory() {
 }
 
 function stringFactory() {
-	const string = faker.datatype.string();
-	const letters = string.match(/([A-z])/g);
-	return letters.join('');
+	const string = faker.random.alphaNumeric(30);
+	return string;
 }
 
 export { productFactory, uuidFactory, stringFactory };
