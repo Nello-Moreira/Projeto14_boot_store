@@ -11,15 +11,15 @@ import { insertColor, deleteAllColors } from '../src/data/colorsTable.js';
 import { insertProduct, deleteAllProducts } from '../src/data/productsTable.js';
 import categoryProducts from '../src/controllers/categoryProducts.js';
 
-import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
 import productFactory from './factories/productFactory.js';
+import stringFactory from './factories/stringFactory';
 
 describe('get /category/:name', () => {
 	const fakeColor = colorFactory();
-	const fakeCategory = categoryFactory();
-	const fakeCategory2 = categoryFactory();
-	const fakeCategory3 = categoryFactory();
+	const fakeCategory = { name: stringFactory() };
+	const fakeCategory2 = { name: stringFactory() };
+	const fakeCategory3 = { name: stringFactory() };
 
 	let fakeProduct;
 	let fakeProduct2;
@@ -77,7 +77,7 @@ describe('get /category/:name', () => {
 			id: fakeProduct.uuid,
 			name: fakeProduct.name,
 			description: fakeProduct.description,
-			price: String(fakeProduct.price),
+			price: fakeProduct.price.toFixed(2),
 			color: fakeColor.name,
 			image_url: fakeProduct.image_url,
 		};
@@ -102,7 +102,7 @@ describe('get /category/:name', () => {
 			id: fakeProduct.uuid,
 			name: fakeProduct.name,
 			description: fakeProduct.description,
-			price: String(fakeProduct.price),
+			price: fakeProduct.price.toFixed(2),
 			color: fakeColor.name,
 			image_url: fakeProduct.image_url,
 		};

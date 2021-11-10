@@ -13,6 +13,7 @@ import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
 import productFactory from './factories/productFactory.js';
 import uuidFactory from './factories/uuidFactory.js';
+import stringFactory from './factories/stringFactory';
 
 describe('get /products/:id', () => {
 	const fakeColor = colorFactory();
@@ -47,7 +48,9 @@ describe('get /products/:id', () => {
 	});
 
 	it('returns 400 when a non-uuid type is passed', async () => {
-		const result = await supertest(server).get(`/products/test-string`);
+		const result = await supertest(server).get(
+			`/products/${stringFactory()}`
+		);
 		expect(result.status).toEqual(400);
 	});
 
