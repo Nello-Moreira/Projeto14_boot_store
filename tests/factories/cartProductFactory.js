@@ -11,4 +11,14 @@ function cartProductFactory(cartId, productId) {
 	};
 }
 
-export default cartProductFactory;
+function incorrectCartProductFactory(cartId, productId) {
+	return {
+		cart_id: cartId,
+		products_id: productId,
+		product_quantity: faker.datatype.string(),
+		product_price: faker.datatype.string(),
+		removed_at: faker.datatype.uuid(),
+	};
+}
+
+export { cartProductFactory, incorrectCartProductFactory };

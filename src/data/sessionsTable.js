@@ -14,4 +14,8 @@ function deleteAllSessions() {
 	return dbConnection.query('DELETE FROM sessions;');
 }
 
-export { insertSession, deleteAllSessions };
+function getToken(token) {
+	return dbConnection.query('SELECT FROM sessions WHERE token = $1', [token]);
+}
+
+export { insertSession, deleteAllSessions, getToken };

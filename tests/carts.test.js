@@ -23,9 +23,12 @@ import { insertSession, deleteAllSessions } from '../src/data/sessionsTable.js';
 
 import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
-import { productFactory } from './factories/productFactory.js';
+import { productFactory, uuidFactory } from './factories/productFactory.js';
 import { openCartFactory, closedCartFactory } from './factories/cartFactory.js';
-import cartProductFactory from './factories/cartProductFactory.js';
+import {
+	cartProductFactory,
+	incorrectCartProductFactory,
+} from './factories/cartProductFactory.js';
 import userFactory from './factories/userFactory.js';
 import sessionFactory from './factories/sessionFactory.js';
 
@@ -40,6 +43,7 @@ describe('post /carts/:id', () => {
 	const fakeUser = userFactory();
 	let fakeSession;
 	let fakeCart;
+	let productId;
 
 	beforeAll(async () => {
 		await deleteAllCartProducts();
@@ -60,11 +64,42 @@ describe('post /carts/:id', () => {
 
 		await insertProduct(fakeProduct);
 		await insertSession(fakeSession);
+
+		productId = (await getProductIdByUuid(fakeProduct.uuid)).rows[0].id;
+	});
+
+	it('returns 401 when no token is passed', async () => {
+		const fakeCartProduct = cartProductFactory(fakeCart.id, productId);
+
+		const result = await supertest(server)
+			.post(`/carts/${fakeCart.uuid}`)
+			.send(fakeCartProduct);
+		expect(result.status).toEqual(401);
+	});
+
+	it('returns 401 when an incorrect token is passed', async () => {
+		const incorrectToken = uuidFactory();
+		const fakeCartProduct = cartProductFactory(fakeCart.id, productId);
+		const result = await supertest(server)
+			.post(`/carts/${fakeCart.uuid}`)
+			.send(fakeCartProduct)
+			.set('Authorization', `Bearer ${incorrectToken}`);
+	});
+
+	it('returns 400 when an incorrect product is added to the cart', async () => {
+		const incorrectFakeCartProduct = incorrectCartProductFactory(
+			fakeCart.id,
+			productId
+		);
+
+		const result = await supertest(server)
+			.post(`/carts/${fakeCart.uuid}`)
+			.send(incorrectFakeCartProduct)
+			.set('Authorization', `Bearer ${fakeSession.token}`);
+		expect(result.status).toEqual(400);
 	});
 
 	it('returns 200 and adds a product to the cart when it is an existent product', async () => {
-		const productId = (await getProductIdByUuid(fakeProduct.uuid)).rows[0]
-			.id;
 		const fakeCartProduct = cartProductFactory(fakeCart.id, productId);
 
 		const result = await supertest(server)
@@ -73,7 +108,7 @@ describe('post /carts/:id', () => {
 			.set('Authorization', `Bearer ${fakeSession.token}`);
 		const registeredProduct = await getCartProduct(productId, fakeCart.id);
 		expect(result.status).toEqual(200);
-		expect(registeredProduct.rowCount).toEqual(1);
+		expect(!!registeredProduct.rowCount).toEqual(true);
 		expect(registeredProduct.rows[0]).toHaveProperty('id');
 		expect(registeredProduct.rows[0]).toHaveProperty('cart_id');
 		expect(registeredProduct.rows[0]).toHaveProperty('products_id');
