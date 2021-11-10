@@ -23,7 +23,8 @@ import { insertSession, deleteAllSessions } from '../src/data/sessionsTable.js';
 
 import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
-import { productFactory, uuidFactory } from './factories/productFactory.js';
+import productFactory from './factories/productFactory.js';
+import uuidFactory from './factories/uuidFactory.js';
 import { openCartFactory, closedCartFactory } from './factories/cartFactory.js';
 import {
 	cartProductFactory,
@@ -66,6 +67,16 @@ describe('post /carts/:id', () => {
 		await insertSession(fakeSession);
 
 		productId = (await getProductIdByUuid(fakeProduct.uuid)).rows[0].id;
+	});
+
+	afterAll(async () => {
+		await deleteAllCartProducts();
+		await deleteAllProducts();
+		await deleteAllCategories();
+		await deleteAllColors();
+		await deleteAllCarts();
+		await deleteAllSessions();
+		await deleteAllUsers();
 	});
 
 	it('returns 401 when no token is passed', async () => {

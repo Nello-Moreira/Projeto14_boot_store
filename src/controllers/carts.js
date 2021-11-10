@@ -4,7 +4,7 @@ import { getToken } from '../data/sessionsTable.js';
 import { internalErrorResponse } from '../helpers/helpers.js';
 import validateProduct from '../validation/productValidation.js';
 
-const cartRoute = '/carts/:id';
+const route = '/carts/:id';
 
 async function insertProductInCart(req, res) {
 	const token = req.headers.authorization?.replace('Bearer ', '');
@@ -27,4 +27,6 @@ async function insertProductInCart(req, res) {
 	}
 }
 
-export { insertProductInCart, cartRoute };
+const carts = { route, insertProductInCart };
+
+export default carts;

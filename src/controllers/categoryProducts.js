@@ -1,0 +1,49 @@
+import {
+	productsPerPage,
+	getOffset,
+	internalErrorResponse,
+} from '../helpers/helpers.js';
+
+import {
+	checkIfCategoryExists,
+	searchCategoryProducts,
+	categoryProductsCount,
+} from '../data/categoriesTable.js';
+
+const route = '/category/:name';
+
+const getCategoryProducts = async (request, response) => {
+	const categoryName = request.params.name;
+	const { page } = request.query;
+
+	try {
+		const categoryExists = await checkIfCategoryExists(categoryName);
+
+		if (!categoryExists) {
+			return response
+				.status(400)
+				.send("The requested category doesn't exist");
+		}
+
+		const products = await searchCategoryProducts(
+			categoryName,
+			getOffset(page)
+		);
+
+		if (products.rowCount === 0) return response.sendStatus(204);
+
+		const productsCount = await categoryProductsCount(categoryName);
+
+		return response.status(200).send({
+			pagesCount: Math.ceil(
+				productsCount.rows[0].count / productsPerPage
+			),
+			products: products.rows,
+		});
+	} catch (error) {
+		return internalErrorResponse(response, error);
+	}
+};
+const categoryProducts = { route, getCategoryProducts };
+
+export default categoryProducts;

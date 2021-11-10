@@ -12,23 +12,16 @@ import { deleteAllCartProducts } from '../src/data/cartsProductsTable.js';
 
 import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
-import {
-	productFactory,
-	uuidFactory,
-	stringFactory,
-} from './factories/productFactory.js';
-
-afterAll(() => {
-	endConnection();
-});
+import productFactory from './factories/productFactory.js';
+import uuidFactory from './factories/uuidFactory.js';
+import stringFactory from './factories/stringFactory.js';
 
 describe('get /products/:id', () => {
 	const fakeColor = colorFactory();
 	const fakeCategory = categoryFactory();
-	let fakeProduct;
+	const fakeUuid = uuidFactory();
 
-	let existentUuid;
-	let fakeUuid;
+	let fakeProduct;
 	let nonUuid;
 
 	beforeAll(async () => {
@@ -37,15 +30,13 @@ describe('get /products/:id', () => {
 		await deleteAllCategories();
 		await deleteAllColors();
 
-		fakeUuid = uuidFactory();
-		nonUuid = stringFactory();
 		fakeCategory.id = (await insertCategory(fakeCategory.name)).rows[0].id;
 		fakeColor.id = (await insertColor(fakeColor.name)).rows[0].id;
-	});
 
-	afterEach(async () => {
 		fakeProduct = productFactory(fakeColor.id, fakeCategory.id);
-		existentUuid = (await insertProduct(fakeProduct)).rows[0].uuid;
+		nonUuid = stringFactory();
+
+		await insertProduct(fakeProduct);
 	});
 
 	afterAll(async () => {
@@ -53,24 +44,26 @@ describe('get /products/:id', () => {
 		await deleteAllProducts();
 		await deleteAllCategories();
 		await deleteAllColors();
+		endConnection();
 	});
 
-	it('returns 404 when a non-existent uuid is passed', async () => {
+	it('returns 404 when a non-existent product uuid is passed', async () => {
 		const result = await supertest(server).get(`/products/${fakeUuid}`);
 		expect(result.status).toEqual(404);
 	});
 
 	it('returns 200 and a product when a correct uuid is passed', async () => {
-		const result = await supertest(server).get(`/products/${existentUuid}`);
+		const result = await supertest(server).get(
+			`/products/${fakeProduct.uuid}`
+		);
 		expect(result.status).toEqual(200);
 		expect(result.body).toHaveProperty('id');
-		expect(result.body).toHaveProperty('uuid');
 		expect(result.body).toHaveProperty('name');
 		expect(result.body).toHaveProperty('description');
 		expect(result.body).toHaveProperty('price');
-		expect(result.body).toHaveProperty('color_id');
+		expect(result.body).toHaveProperty('color');
 		expect(result.body).toHaveProperty('image_url');
-		expect(result.body).toHaveProperty('category_id');
+		expect(result.body).toHaveProperty('category');
 	});
 
 	it('returns 400 when a non-uuid type is passed', async () => {

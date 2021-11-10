@@ -11,13 +11,4 @@ const productFactory = (colorId, CategoryId) => ({
 	category_id: CategoryId,
 });
 
-function uuidFactory() {
-	return faker.datatype.uuid();
-}
-
-function stringFactory() {
-	const string = faker.random.alphaNumeric(30);
-	return string;
-}
-
-export { productFactory, uuidFactory, stringFactory };
+export default productFactory;

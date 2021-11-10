@@ -12,11 +12,7 @@ import { deleteAllCartProducts } from '../src/data/cartsProductsTable.js';
 
 import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
-import { productFactory } from './factories/productFactory.js';
-
-afterAll(() => {
-	endConnection();
-});
+import productFactory from './factories/productFactory.js';
 
 describe('get /products', () => {
 	const fakeColor = colorFactory();
@@ -32,34 +28,37 @@ describe('get /products', () => {
 
 		fakeCategory.id = (await insertCategory(fakeCategory.name)).rows[0].id;
 		fakeColor.id = (await insertColor(fakeColor.name)).rows[0].id;
-	});
 
-	afterEach(async () => {
 		fakeProduct = productFactory(fakeColor.id, fakeCategory.id);
+
 		await insertProduct(fakeProduct);
 	});
 
-	afterAll(async () => {
+	afterEach(async () => {
 		await deleteAllCartProducts();
 		await deleteAllProducts();
 		await deleteAllCategories();
 		await deleteAllColors();
 	});
 
-	it('returns 200 and an empty array when there are no products', async () => {
-		const result = await supertest(server).get('/products');
-		expect(result.status).toEqual(200);
-		expect(result.body).toEqual([]);
+	afterAll(async () => {
+		endConnection();
 	});
 
 	it('returns 200 and a product array when there are products', async () => {
 		const result = await supertest(server).get('/products');
 		expect(result.status).toEqual(200);
-		expect(result.body).toHaveProperty('count');
+		expect(result.body).toHaveProperty('pagesCount');
+		expect(result.body.products.length).toEqual(1);
 		expect(result.body.products[0]).toHaveProperty('id');
-		expect(result.body.products[0]).toHaveProperty('uuid');
 		expect(result.body.products[0]).toHaveProperty('name');
 		expect(result.body.products[0]).toHaveProperty('price');
 		expect(result.body.products[0]).toHaveProperty('image_url');
+	});
+
+	it('returns 200 and an empty array when there are no products', async () => {
+		const result = await supertest(server).get('/products');
+		expect(result.status).toEqual(200);
+		expect(result.body).toEqual([]);
 	});
 });
