@@ -15,8 +15,8 @@ function queryProductById(uuid) {
 	return dbConnection.query('SELECT * FROM products WHERE uuid = $1', [uuid]);
 }
 
-const insertProduct = async (product) => {
-	const result = await dbConnection.query(
+function insertProduct(product) {
+	return dbConnection.query(
 		`
     INSERT INTO products
     (uuid, name, description, price, color_id, image_url, category_id)
@@ -31,10 +31,15 @@ const insertProduct = async (product) => {
 			product.category_id,
 		]
 	);
-	return result.rows[0].uuid;
-};
+}
 
 const deleteAllProducts = () => dbConnection.query('DELETE FROM products;');
+
+function getProductIdByUuid(uuid) {
+	return dbConnection.query('SELECT id FROM products WHERE uuid = $1', [
+		uuid,
+	]);
+}
 
 export {
 	queryProducts,
@@ -42,4 +47,5 @@ export {
 	queryProductById,
 	insertProduct,
 	deleteAllProducts,
+	getProductIdByUuid,
 };

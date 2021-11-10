@@ -8,6 +8,7 @@ import {
 } from '../src/data/categoriesTable.js';
 import { insertColor, deleteAllColors } from '../src/data/colorsTable.js';
 import { insertProduct, deleteAllProducts } from '../src/data/productsTable.js';
+import { deleteAllCartProducts } from '../src/data/cartsProductsTable.js';
 
 import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
@@ -24,6 +25,7 @@ describe('get /products', () => {
 	let fakeProduct;
 
 	beforeAll(async () => {
+		await deleteAllCartProducts();
 		await deleteAllProducts();
 		await deleteAllCategories();
 		await deleteAllColors();
@@ -38,6 +40,7 @@ describe('get /products', () => {
 	});
 
 	afterAll(async () => {
+		await deleteAllCartProducts();
 		await deleteAllProducts();
 		await deleteAllCategories();
 		await deleteAllColors();

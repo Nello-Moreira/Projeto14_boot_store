@@ -3,7 +3,7 @@ faker.locale = 'pt_BR';
 
 const productFactory = (colorId, CategoryId) => ({
 	uuid: faker.datatype.uuid(),
-	name: faker.name.firstName(),
+	name: faker.commerce.productName(),
 	description: faker.commerce.productDescription(),
 	price: faker.datatype.float(),
 	color_id: colorId,
