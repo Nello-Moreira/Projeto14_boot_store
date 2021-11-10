@@ -14,24 +14,26 @@ describe('get /categories', () => {
 	const fakeCategory = categoryFactory();
 
 	beforeAll(async () => {
-		let waiting = await deleteAllCategories();
+		await deleteAllCategories();
 		await insertCategory(fakeCategory.name);
 	});
 
 	afterEach(async () => {
-		let waiting = await deleteAllCategories();
+		await deleteAllCategories();
 	});
 
 	afterAll(() => endConnection());
 
 	it('should return status code 200 and an array of categories', async () => {
 		const routeReturn = await supertest(server).get(categories.route);
+
 		expect(routeReturn.status).toEqual(200);
 		expect(routeReturn.body).toContainEqual(fakeCategory.name);
 	});
 
 	it('should return status code 204 when there are no categories', async () => {
 		const routeReturn = await supertest(server).get(categories.route);
+
 		expect(routeReturn.status).toEqual(204);
 	});
 });

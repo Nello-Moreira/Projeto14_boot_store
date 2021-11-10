@@ -1,6 +1,7 @@
 import server from '../src/server.js';
 import supertest from 'supertest';
 import endConnection from '../src/helpers/endConnection.js';
+import { productsPerPage } from '../src/helpers/helpers.js';
 
 import {
 	insertCategory,
@@ -18,6 +19,7 @@ describe('get /category/:name', () => {
 	const fakeColor = colorFactory();
 	const fakeCategory = categoryFactory();
 	const fakeCategory2 = categoryFactory();
+	const fakeCategory3 = categoryFactory();
 
 	let fakeProduct;
 	let fakeProduct2;
@@ -36,18 +38,64 @@ describe('get /category/:name', () => {
 
 		fakeProduct = productFactory(fakeColor.id, fakeCategory.id);
 		fakeProduct2 = productFactory(fakeColor.id, fakeCategory2.id);
-
-		await insertProduct(fakeProduct);
-		await insertProduct(fakeProduct2);
 	});
 
 	afterEach(async () => {
-		let waiting = await deleteAllProducts();
-		waiting = await deleteAllCategories();
-		waiting = await deleteAllColors();
+		await deleteAllProducts();
+
+		for (let i = 0; i <= productsPerPage; i++) {
+			await insertProduct(fakeProduct);
+		}
+
+		await insertProduct(fakeProduct2);
 	});
 
-	afterAll(() => endConnection());
+	afterAll(async () => {
+		await deleteAllProducts();
+		await deleteAllCategories();
+		await deleteAllColors();
+		endConnection();
+	});
+
+	it('should return status code 204 when there are no products', async () => {
+		const routeReturn = await supertest(server).get(
+			categoryProducts.route.replace(':name', fakeCategory.name)
+		);
+		expect(routeReturn.status).toEqual(204);
+	});
+
+	it("should return status code 400 when the requested category doesn't exist", async () => {
+		const routeReturn = await supertest(server).get(
+			categoryProducts.route.replace(':name', fakeCategory3.name)
+		);
+
+		expect(routeReturn.status).toEqual(400);
+	});
+
+	it('should return status code 200 and an array of products from a specific page number', async () => {
+		const expectedReturn = {
+			id: fakeProduct.uuid,
+			name: fakeProduct.name,
+			description: fakeProduct.description,
+			price: String(fakeProduct.price),
+			color: fakeColor.name,
+			image_url: fakeProduct.image_url,
+		};
+
+		const routeReturn = await supertest(server).get(
+			categoryProducts.route.replace(
+				':name',
+				`${fakeCategory.name}?page=2`
+			)
+		);
+
+		expect(routeReturn.status).toEqual(200);
+		expect(routeReturn.body.pagesCount).toEqual(2);
+		expect(routeReturn.body.products.length).toEqual(1);
+		expect(routeReturn.body.products[0]).toEqual(
+			expect.objectContaining(expectedReturn)
+		);
+	});
 
 	it('should return status code 200 and an array of products from a specific category', async () => {
 		const expectedReturn = {
@@ -62,17 +110,12 @@ describe('get /category/:name', () => {
 		const routeReturn = await supertest(server).get(
 			categoryProducts.route.replace(':name', fakeCategory.name)
 		);
+
 		expect(routeReturn.status).toEqual(200);
-		expect(routeReturn.body.length).toEqual(1);
-		expect(routeReturn.body[0]).toEqual(
+		expect(routeReturn.body.pagesCount).toEqual(2);
+		expect(routeReturn.body.products.length).toEqual(productsPerPage);
+		expect(routeReturn.body.products[0]).toEqual(
 			expect.objectContaining(expectedReturn)
 		);
-	});
-
-	it('should return status code 204 when there are no categories', async () => {
-		const routeReturn = await supertest(server).get(
-			categoryProducts.route.replace(':name', fakeCategory.name)
-		);
-		expect(routeReturn.status).toEqual(204);
 	});
 });
