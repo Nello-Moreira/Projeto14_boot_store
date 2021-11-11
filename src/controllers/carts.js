@@ -2,7 +2,7 @@
 import { insertCartProduct } from '../data/cartsProductsTable.js';
 import { getToken } from '../data/sessionsTable.js';
 import { internalErrorResponse } from '../helpers/helpers.js';
-import validateProduct from '../validation/productValidation.js';
+import validateProduct from '../validations/productValidation.js';
 
 const route = '/carts/:id';
 
