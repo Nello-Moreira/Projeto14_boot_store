@@ -10,7 +10,6 @@ import {
 } from '../src/data/productsTable.js';
 import { insertCart, deleteAllCarts } from '../src/data/cartsTable.js';
 import {
-	insertCartProduct,
 	deleteAllCartProducts,
 	getCartProduct,
 } from '../src/data/cartsProductsTable.js';
@@ -26,7 +25,7 @@ import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
 import productFactory from './factories/productFactory.js';
 import uuidFactory from './factories/uuidFactory.js';
-import { openCartFactory, closedCartFactory } from './factories/cartFactory.js';
+import openCartFactory from './factories/cartFactory.js';
 import {
 	cartProductFactory,
 	incorrectCartProductFactory,
