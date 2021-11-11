@@ -1,6 +1,7 @@
 import supertest from 'supertest';
 import server from '../src/server.js';
 import endConnection from '../src/helpers/endConnection.js';
+import allProducts from '../src/controllers/allProducts.js';
 
 import {
 	insertCategory,
@@ -12,6 +13,7 @@ import { insertProduct, deleteAllProducts } from '../src/data/productsTable.js';
 import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
 import productFactory from './factories/productFactory.js';
+import stringFactory from './factories/stringFactory.js';
 
 describe('get /products', () => {
 	const fakeColor = colorFactory();
@@ -46,7 +48,7 @@ describe('get /products', () => {
 	});
 
 	it('returns 200 and a product array when there are products', async () => {
-		const result = await supertest(server).get('/products');
+		const result = await supertest(server).get(allProducts.route);
 		expect(result.status).toEqual(200);
 		expect(result.body).toHaveProperty('pagesCount');
 		expect(result.body.products.length).toEqual(2);
@@ -57,8 +59,16 @@ describe('get /products', () => {
 	});
 
 	it('returns 200 and an empty array when there are no products', async () => {
-		const result = await supertest(server).get('/products');
+		const result = await supertest(server).get(allProducts.route);
 		expect(result.status).toEqual(200);
 		expect(result.body).toEqual([]);
+	});
+
+	it('should return status code 400 when the page parameter is invalid', async () => {
+		const routeReturn = await supertest(server).get(
+			`${allProducts.route}?page=${stringFactory()}`
+		);
+
+		expect(routeReturn.status).toEqual(400);
 	});
 });

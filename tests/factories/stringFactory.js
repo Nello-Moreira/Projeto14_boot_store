@@ -1,6 +1,6 @@
 import faker from 'faker';
 faker.locale = 'pt_BR';
 
-export default function uuidFactory() {
+export default function stringFactory() {
 	return faker.random.alphaNumeric(30);
 }
