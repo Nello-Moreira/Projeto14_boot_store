@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 const signUpSchema = Joi.object({
-	name: Joi.string().alphanum().min(1).required(),
+	name: Joi.string().min(1).required(),
 	email: Joi.string()
 		.email({
 			minDomainSegments: 2,
@@ -10,8 +10,10 @@ const signUpSchema = Joi.object({
 		.required(),
 	password: Joi.string().min(1).required(),
 	avatarUrl: Joi.string().pattern(
-		/^((http:\/\/)|(https:\/\/)).*((\.jpg)|(\.jpeg)|(\.png))$/g
+		/^((http:\/\/)|(https:\/\/)).+((jpg)|(jpeg)|(png))$/
 	),
-}).length(4);
+})
+	.min(3)
+	.max(4);
 
 export default signUpSchema;
