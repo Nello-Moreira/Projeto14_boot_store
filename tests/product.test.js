@@ -46,21 +46,21 @@ describe('get /products/:id', () => {
 
 	it('returns 404 when a non-existent product uuid is passed', async () => {
 		const result = await supertest(server).get(
-			`${product.route}/${fakeUuid}`
+			product.route.replace(':id', fakeUuid)
 		);
 		expect(result.status).toEqual(404);
 	});
 
 	it('returns 400 when a non-uuid type is passed', async () => {
 		const result = await supertest(server).get(
-			`${product.route}/${nonUUID}`
+			product.route.replace(':id', nonUUID)
 		);
 		expect(result.status).toEqual(400);
 	});
 
 	it('returns 200 and a product when a correct uuid is passed', async () => {
 		const result = await supertest(server).get(
-			`${product.route}/${fakeProduct.uuid}`
+			product.route.replace(':id', fakeProduct.uuid)
 		);
 		expect(result.status).toEqual(200);
 		expect(result.body).toHaveProperty('id');
