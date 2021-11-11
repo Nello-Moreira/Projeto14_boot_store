@@ -11,15 +11,15 @@ import { insertColor, deleteAllColors } from '../src/data/colorsTable.js';
 import { insertProduct, deleteAllProducts } from '../src/data/productsTable.js';
 import categoryProducts from '../src/controllers/categoryProducts.js';
 
-import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
 import productFactory from './factories/productFactory.js';
+import stringFactory from './factories/stringFactory';
 
 describe('get /category/:name', () => {
 	const fakeColor = colorFactory();
-	const fakeCategory = categoryFactory();
-	const fakeCategory2 = categoryFactory();
-	const fakeCategory3 = categoryFactory();
+	const fakeCategory = { name: stringFactory() };
+	const fakeCategory2 = { name: stringFactory() };
+	const fakeCategory3 = { name: stringFactory() };
 
 	let fakeProduct;
 	let fakeProduct2;
@@ -64,12 +64,12 @@ describe('get /category/:name', () => {
 		expect(routeReturn.status).toEqual(204);
 	});
 
-	it("should return status code 400 when the requested category doesn't exist", async () => {
+	it("should return status code 404 when the requested category doesn't exist", async () => {
 		const routeReturn = await supertest(server).get(
 			categoryProducts.route.replace(':name', 'teste')
 		);
 
-		expect(routeReturn.status).toEqual(400);
+		expect(routeReturn.status).toEqual(404);
 	});
 
 	it('should return status code 200 and an array of products from a specific page number', async () => {
@@ -92,9 +92,7 @@ describe('get /category/:name', () => {
 		expect(routeReturn.status).toEqual(200);
 		expect(routeReturn.body.pagesCount).toEqual(2);
 		expect(routeReturn.body.products.length).toEqual(1);
-		expect(routeReturn.body.products[0]).toEqual(
-			expect.objectContaining(expectedReturn)
-		);
+		expect(routeReturn.body.products[0]).toEqual(expectedReturn);
 	});
 
 	it('should return status code 200 and an array of products from a specific category', async () => {
@@ -114,8 +112,17 @@ describe('get /category/:name', () => {
 		expect(routeReturn.status).toEqual(200);
 		expect(routeReturn.body.pagesCount).toEqual(2);
 		expect(routeReturn.body.products.length).toEqual(productsPerPage);
-		expect(routeReturn.body.products[0]).toEqual(
-			expect.objectContaining(expectedReturn)
+		expect(routeReturn.body.products[0]).toEqual(expectedReturn);
+	});
+
+	it('should return status code 400 when the page parameter is invalid', async () => {
+		const routeReturn = await supertest(server).get(
+			categoryProducts.route.replace(
+				':name',
+				`${fakeCategory.name}?page=${stringFactory()}`
+			)
 		);
+
+		expect(routeReturn.status).toEqual(400);
 	});
 });
