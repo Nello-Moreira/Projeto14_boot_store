@@ -1,6 +1,7 @@
 import supertest from 'supertest';
 import server from '../src/server.js';
 import endConnection from '../src/helpers/endConnection.js';
+import product from '../src/controllers/product.js';
 
 import {
 	insertCategory,
@@ -20,9 +21,9 @@ describe('get /products/:id', () => {
 	const fakeColor = colorFactory();
 	const fakeCategory = categoryFactory();
 	const fakeUuid = uuidFactory();
+	const nonUUID = stringFactory();
 
 	let fakeProduct;
-	let nonUuid;
 
 	beforeAll(async () => {
 		await deleteAllCartProducts();
@@ -34,7 +35,6 @@ describe('get /products/:id', () => {
 		fakeColor.id = (await insertColor(fakeColor.name)).rows[0].id;
 
 		fakeProduct = productFactory(fakeColor.id, fakeCategory.id);
-		nonUuid = stringFactory();
 
 		await insertProduct(fakeProduct);
 	});
@@ -48,13 +48,22 @@ describe('get /products/:id', () => {
 	});
 
 	it('returns 404 when a non-existent product uuid is passed', async () => {
-		const result = await supertest(server).get(`/products/${fakeUuid}`);
+		const result = await supertest(server).get(
+			product.route.replace(':id', fakeUuid)
+		);
 		expect(result.status).toEqual(404);
+	});
+
+	it('returns 400 when a non-uuid type is passed', async () => {
+		const result = await supertest(server).get(
+			product.route.replace(':id', nonUUID)
+		);
+		expect(result.status).toEqual(400);
 	});
 
 	it('returns 200 and a product when a correct uuid is passed', async () => {
 		const result = await supertest(server).get(
-			`/products/${fakeProduct.uuid}`
+			product.route.replace(':id', fakeProduct.uuid)
 		);
 		expect(result.status).toEqual(200);
 		expect(result.body).toHaveProperty('id');
@@ -64,10 +73,5 @@ describe('get /products/:id', () => {
 		expect(result.body).toHaveProperty('color');
 		expect(result.body).toHaveProperty('image_url');
 		expect(result.body).toHaveProperty('category');
-	});
-
-	it('returns 400 when a non-uuid type is passed', async () => {
-		const result = await supertest(server).get(`/products/${nonUuid}`);
-		expect(result.status).toEqual(400);
 	});
 });

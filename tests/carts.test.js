@@ -1,6 +1,7 @@
 import supertest from 'supertest';
 import server from '../src/server.js';
 import endConnection from '../src/helpers/endConnection.js';
+import carts from '../src/controllers/carts.js';
 
 import {
 	insertProduct,
@@ -83,7 +84,7 @@ describe('post /carts/:id', () => {
 		const fakeCartProduct = cartProductFactory(fakeCart.id, productId);
 
 		const result = await supertest(server)
-			.post(`/carts/${fakeCart.uuid}`)
+			.post(carts.route.replace(':id', fakeCart.uuid))
 			.send(fakeCartProduct);
 		expect(result.status).toEqual(401);
 	});
@@ -92,7 +93,7 @@ describe('post /carts/:id', () => {
 		const incorrectToken = uuidFactory();
 		const fakeCartProduct = cartProductFactory(fakeCart.id, productId);
 		const result = await supertest(server)
-			.post(`/carts/${fakeCart.uuid}`)
+			.post(carts.route.replace(':id', fakeCart.uuid))
 			.send(fakeCartProduct)
 			.set('Authorization', `Bearer ${incorrectToken}`);
 		expect(result.status).toEqual(401);
@@ -105,7 +106,7 @@ describe('post /carts/:id', () => {
 		);
 
 		const result = await supertest(server)
-			.post(`/carts/${fakeCart.uuid}`)
+			.post(carts.route.replace(':id', fakeCart.uuid))
 			.send(incorrectFakeCartProduct)
 			.set('Authorization', `Bearer ${fakeSession.token}`);
 		expect(result.status).toEqual(400);
@@ -115,7 +116,7 @@ describe('post /carts/:id', () => {
 		const fakeCartProduct = cartProductFactory(fakeCart.id, productId);
 
 		const result = await supertest(server)
-			.post(`/carts/${fakeCart.uuid}`)
+			.post(carts.route.replace(':id', fakeCart.uuid))
 			.send(fakeCartProduct)
 			.set('Authorization', `Bearer ${fakeSession.token}`);
 		const registeredProduct = await getCartProduct(productId, fakeCart.id);
