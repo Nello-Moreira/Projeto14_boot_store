@@ -9,4 +9,12 @@ const internalErrorResponse = (response, error) => {
 		.send('There was an internal error. Please try again later.');
 };
 
-export { productsPerPage, getOffset, internalErrorResponse };
+const createRandomInteger = (min, max) =>
+	Math.floor(Math.random() * (max - min)) + min;
+
+export {
+	productsPerPage,
+	getOffset,
+	internalErrorResponse,
+	createRandomInteger,
+};

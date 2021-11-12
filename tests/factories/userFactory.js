@@ -1,7 +1,7 @@
 import faker from 'faker';
 faker.locale = 'pt_BR';
 
-function userFactory() {
+export default function userFactory() {
 	return {
 		uuid: faker.datatype.uuid(),
 		name: faker.name.findName(),
@@ -10,5 +10,3 @@ function userFactory() {
 		avatar_url: faker.image.imageUrl(),
 	};
 }
-
-export default userFactory;
