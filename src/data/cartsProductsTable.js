@@ -20,11 +20,27 @@ function deleteAllCartProducts() {
 	return dbConnection.query('DELETE FROM carts_products;');
 }
 
-function getCartProduct(productId, cartId) {
+function getCartProduct(productId) {
 	return dbConnection.query(
-		'SELECT * FROM carts_products WHERE products_id = $1 AND cart_id = $2',
-		[productId, cartId]
+		'SELECT * FROM carts_products WHERE products_id = $1',
+		[productId]
 	);
 }
 
-export { insertCartProduct, deleteAllCartProducts, getCartProduct };
+function getAllProductsInCart(cartId) {
+	return dbConnection.query(
+		`
+	SELECT carts_products.* FROM carts_products JOIN carts
+	ON carts.id = carts_products.cart_id
+	WHERE carts_products.cart_id = $1
+	`,
+		[cartId]
+	);
+}
+
+export {
+	insertCartProduct,
+	deleteAllCartProducts,
+	getCartProduct,
+	getAllProductsInCart,
+};
