@@ -9,4 +9,12 @@ function openCartFactory(userId) {
 	};
 }
 
-export default openCartFactory;
+function closedCartFactory(userId) {
+	return {
+		uuid: faker.datatype.uuid(),
+		user_id: userId,
+		payment_date: faker.date.recent(),
+	};
+}
+
+export { openCartFactory, closedCartFactory };

@@ -20,4 +20,11 @@ function getCart(userId) {
 	]);
 }
 
-export { insertCart, deleteAllCarts, getCart };
+function queryOpenCart(userId) {
+	return dbConnection.query(
+		'SELECT * FROM carts WHERE user_id = $1 AND payment_date IS NULL',
+		[userId]
+	);
+}
+
+export { insertCart, deleteAllCarts, getCart, queryOpenCart };

@@ -28,4 +28,6 @@ server.post(cartProducts.route, cartProducts.insertProductInCart);
 
 server.post(cart.route, cart.createCart);
 
+server.get(cart.route, cart.getOpenCart);
+
 export default server;

@@ -26,7 +26,7 @@ import colorFactory from './factories/colorFactory.js';
 import productFactory from './factories/productFactory.js';
 import uuidFactory from './factories/uuidFactory.js';
 import stringFactory from './factories/stringFactory.js';
-import openCartFactory from './factories/cartFactory.js';
+import { openCartFactory } from './factories/cartFactory.js';
 import {
 	cartProductFactory,
 	incorrectCartProductFactory,
