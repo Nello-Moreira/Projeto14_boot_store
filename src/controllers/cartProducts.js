@@ -5,7 +5,7 @@ import { internalErrorResponse } from '../helpers/helpers.js';
 import validateProduct from '../validations/productValidation.js';
 import validateUuid from '../validations/uuidValidation.js';
 
-const route = '/carts/:id';
+const route = '/cartProducts';
 
 async function insertProductInCart(req, res) {
 	const token = req.headers.authorization?.replace('Bearer ', '');
@@ -27,6 +27,7 @@ async function insertProductInCart(req, res) {
 				.status(400)
 				.send(productValidation.error.details[0].message);
 		}
+
 		await insertCartProduct(req.body);
 		res.send();
 	} catch (error) {
@@ -34,6 +35,6 @@ async function insertProductInCart(req, res) {
 	}
 }
 
-const carts = { route, insertProductInCart };
+const cartProducts = { route, insertProductInCart };
 
-export default carts;
+export default cartProducts;

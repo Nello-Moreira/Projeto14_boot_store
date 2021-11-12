@@ -14,4 +14,10 @@ function deleteAllCarts() {
 	return dbConnection.query('DELETE FROM carts;');
 }
 
-export { insertCart, deleteAllCarts };
+function getCart(userId) {
+	return dbConnection.query('SELECT * FROM carts WHERE user_id = $1', [
+		userId,
+	]);
+}
+
+export { insertCart, deleteAllCarts, getCart };
