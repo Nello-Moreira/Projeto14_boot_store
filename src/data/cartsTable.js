@@ -1,4 +1,4 @@
-import dbConnection from './connection';
+import dbConnection from './connection.js';
 
 function insertCart(cart) {
 	return dbConnection.query(

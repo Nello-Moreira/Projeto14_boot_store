@@ -1,9 +1,9 @@
 /* eslint-disable consistent-return */
 import { v4 as uuid } from 'uuid';
-import { internalErrorResponse } from '../helpers/helpers';
-import { insertCart } from '../data/cartsTable';
-import { getToken } from '../data/sessionsTable';
-import validateUuid from '../validations/uuidValidation';
+import { internalErrorResponse } from '../helpers/helpers.js';
+import { insertCart } from '../data/cartsTable.js';
+import { getToken } from '../data/sessionsTable.js';
+import validateUuid from '../validations/uuidValidation.js';
 
 const route = '/cart';
 
