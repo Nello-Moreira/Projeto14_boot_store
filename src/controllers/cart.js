@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import { v4 as uuid } from 'uuid';
 import { internalErrorResponse } from '../helpers/helpers.js';
 import { insertCart, queryOpenCart } from '../data/cartsTable.js';
@@ -35,9 +34,9 @@ async function getCart(req, res) {
 		}
 		const cartId = openCart.rows[0].id;
 		const products = await getAllProductsInCart(cartId);
-		res.send(products.rows);
+		return res.send(products.rows);
 	} catch (error) {
-		internalErrorResponse(res, error);
+		return internalErrorResponse(res, error);
 	}
 }
 
@@ -92,9 +91,9 @@ async function insertProduct(req, res) {
 		};
 
 		await insertCartProduct(cartProduct);
-		res.send();
+		return res.send();
 	} catch (error) {
-		internalErrorResponse(res, error);
+		return internalErrorResponse(res, error);
 	}
 }
 
