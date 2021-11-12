@@ -9,12 +9,13 @@ import {
 } from '../src/data/categoriesTable.js';
 import { insertColor, deleteAllColors } from '../src/data/colorsTable.js';
 import { insertProduct, deleteAllProducts } from '../src/data/productsTable.js';
+import { deleteAllCartProducts } from '../src/data/cartsProductsTable.js';
 
 import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
 import productFactory from './factories/productFactory.js';
 import uuidFactory from './factories/uuidFactory.js';
-import stringFactory from './factories/stringFactory';
+import stringFactory from './factories/stringFactory.js';
 
 describe('get /products/:id', () => {
 	const fakeColor = colorFactory();
@@ -25,6 +26,7 @@ describe('get /products/:id', () => {
 	let fakeProduct;
 
 	beforeAll(async () => {
+		await deleteAllCartProducts();
 		await deleteAllProducts();
 		await deleteAllCategories();
 		await deleteAllColors();
@@ -38,6 +40,7 @@ describe('get /products/:id', () => {
 	});
 
 	afterAll(async () => {
+		await deleteAllCartProducts();
 		await deleteAllProducts();
 		await deleteAllCategories();
 		await deleteAllColors();
@@ -67,8 +70,8 @@ describe('get /products/:id', () => {
 		expect(result.body).toHaveProperty('name');
 		expect(result.body).toHaveProperty('description');
 		expect(result.body).toHaveProperty('price');
-		expect(result.body).toHaveProperty('color_id');
+		expect(result.body).toHaveProperty('color');
 		expect(result.body).toHaveProperty('image_url');
-		expect(result.body).toHaveProperty('category_id');
+		expect(result.body).toHaveProperty('category');
 	});
 });

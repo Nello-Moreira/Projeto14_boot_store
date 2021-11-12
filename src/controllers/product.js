@@ -8,7 +8,6 @@ async function getProductById(req, res) {
 	const uuid = req.params.id;
 
 	const validation = validateUuid(uuid);
-
 	if (validation.error) {
 		return res.sendStatus(400);
 	}

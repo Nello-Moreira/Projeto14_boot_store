@@ -8,6 +8,7 @@ import categoryProducts from './controllers/categoryProducts.js';
 import allProducts from './controllers/allProducts.js';
 import product from './controllers/product.js';
 import signUp from './controllers/signUp.js';
+import carts from './controllers/carts.js';
 
 const server = express();
 server.use(cors());
@@ -24,5 +25,7 @@ server.get(allProducts.route, allProducts.getProducts);
 server.get(product.route, product.getProductById);
 
 server.post(signUp.route, signUp.postSignUp);
+
+server.post(carts.route, carts.insertProductInCart);
 
 export default server;
