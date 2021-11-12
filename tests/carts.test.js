@@ -25,6 +25,7 @@ import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
 import productFactory from './factories/productFactory.js';
 import uuidFactory from './factories/uuidFactory.js';
+import stringFactory from './factories/stringFactory.js';
 import openCartFactory from './factories/cartFactory.js';
 import {
 	cartProductFactory,
@@ -77,6 +78,13 @@ describe('post /carts/:id', () => {
 		await deleteAllCarts();
 		await deleteAllSessions();
 		await deleteAllUsers();
+	});
+
+	it('returns 400 when a non-uuid type is passed', async () => {
+		const result = await supertest(server)
+			.post(carts.route.replace(':id', fakeCart.uuid))
+			.set('Authorization', `Bearer ${stringFactory()}`);
+		expect(result.status).toEqual(400);
 	});
 
 	it('returns 401 when no token is passed', async () => {
