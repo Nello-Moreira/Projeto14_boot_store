@@ -23,11 +23,8 @@ const postLogin = async (request, response) => {
 			loginObject.email
 		);
 
-		if (existingUser.rowCount === 0) {
-			return response.status(404).send('Incorrect e-mail or password');
-		}
-
 		if (
+			existingUser.rowCount === 0 ||
 			!isCorrectPassword(
 				loginObject.password,
 				existingUser.rows[0].password

@@ -1,16 +1,16 @@
 import dbConnection from './connection.js';
 
-const searchSession = (userId, token) =>
+const searchSession = (userUuid, token) =>
 	dbConnection.query(
 		`SELECT 
-		users.id, users.name, users.email, users.avatar_url
+		users.id, users.name, users.email
 		FROM users
 		JOIN sessions
 			ON sessions.user_id = users.id
 		WHERE
-			users.uuid  = '$1' AND
-			sessions.token= '$2';`,
-		[userId, token]
+			users.uuid  = $1 AND
+			sessions.token= $2;`,
+		[userUuid, token]
 	);
 
 const insertSession = (userId, token) =>
@@ -22,10 +22,28 @@ const insertSession = (userId, token) =>
 		[userId, token]
 	);
 
+const deleteSession = (id, token) =>
+	dbConnection.query(
+		`
+		DELETE FROM sessions
+		WHERE
+			user_id = $1 AND
+			token = $2
+		returning id
+		;`,
+		[id, token]
+	);
+
 const deleteAllSessions = () => dbConnection.query('DELETE FROM sessions;');
 
 function getToken(token) {
 	return dbConnection.query('SELECT FROM sessions WHERE token = $1', [token]);
 }
 
-export { searchSession, insertSession, deleteAllSessions, getToken };
+export {
+	searchSession,
+	insertSession,
+	deleteSession,
+	deleteAllSessions,
+	getToken,
+};
