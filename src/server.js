@@ -7,7 +7,6 @@ import categories from './controllers/categories.js';
 import categoryProducts from './controllers/categoryProducts.js';
 import allProducts from './controllers/allProducts.js';
 import product from './controllers/product.js';
-import cartProducts from './controllers/cartProducts.js';
 import cart from './controllers/cart.js';
 
 const server = express();
@@ -24,10 +23,8 @@ server.get(allProducts.route, allProducts.getProducts);
 
 server.get(product.route, product.getProductById);
 
-server.post(cartProducts.route, cartProducts.insertProductInCart);
+server.post(cart.route, cart.insertProduct);
 
-server.post(cart.route, cart.createCart);
-
-server.get(cart.route, cart.getOpenCart);
+server.get(cart.route, cart.getCart);
 
 export default server;
