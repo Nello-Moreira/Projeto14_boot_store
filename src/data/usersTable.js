@@ -1,19 +1,22 @@
 import dbConnection from './connection.js';
 
-function insertUser(user) {
-	return dbConnection.query(
+const searchUserByParam = (param, paramValue) =>
+	dbConnection.query(`SELECT * FROM users WHERE ${param} = $1;`, [
+		paramValue,
+	]);
+
+const insertUser = ({ uuid, name, email, password, avatarUrl }) =>
+	dbConnection.query(
 		`
-        INSERT INTO users
-        (uuid, name, email, password, avatar_url)
-        VALUES ($1, $2, $3, $4, $5)
-		RETURNING id;
-    `,
-		[user.uuid, user.name, user.email, user.password, user.avatar_url]
+    INSERT INTO users
+    (uuid, name, email, password, avatar_url)
+    VALUES
+    ($1, $2, $3, $4, $5)
+	RETURNING id;
+`,
+		[uuid, name, email, password, avatarUrl]
 	);
-}
 
-function deleteAllUsers() {
-	return dbConnection.query('DELETE FROM users;');
-}
+const deleteAllUsers = () => dbConnection.query('DELETE FROM users;');
 
-export { insertUser, deleteAllUsers };
+export { searchUserByParam, insertUser, deleteAllUsers };

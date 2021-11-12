@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import { internalErrorResponse } from '../helpers/helpers.js';
 import { queryProductById } from '../data/productsTable.js';
 import validateUuid from '../validations/uuidValidation.js';

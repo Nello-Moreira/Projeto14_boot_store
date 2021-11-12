@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import { insertCartProduct } from '../data/cartsProductsTable.js';
 import { getToken } from '../data/sessionsTable.js';
 import { internalErrorResponse } from '../helpers/helpers.js';
@@ -28,9 +27,9 @@ async function insertProductInCart(req, res) {
 				.send(productValidation.error.details[0].message);
 		}
 		await insertCartProduct(req.body);
-		res.send();
+		return res.send();
 	} catch (error) {
-		internalErrorResponse(res, error);
+		return internalErrorResponse(res, error);
 	}
 }
 
