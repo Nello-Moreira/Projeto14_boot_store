@@ -66,7 +66,7 @@ describe('get /category/:name', () => {
 
 	it("should return status code 404 when the requested category doesn't exist", async () => {
 		const routeReturn = await supertest(server).get(
-			categoryProducts.route.replace(':name', fakeCategory3.name)
+			categoryProducts.route.replace(':name', 'teste')
 		);
 
 		expect(routeReturn.status).toEqual(404);

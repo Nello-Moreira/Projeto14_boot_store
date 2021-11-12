@@ -9,6 +9,7 @@ import {
 } from '../src/data/categoriesTable.js';
 import { insertColor, deleteAllColors } from '../src/data/colorsTable.js';
 import { insertProduct, deleteAllProducts } from '../src/data/productsTable.js';
+import { deleteAllCartProducts } from '../src/data/cartsProductsTable.js';
 
 import categoryFactory from './factories/categoryFactory.js';
 import colorFactory from './factories/colorFactory.js';
@@ -20,9 +21,9 @@ describe('get /products', () => {
 	const fakeCategory = categoryFactory();
 
 	let fakeProduct;
-	let fakeProduct2;
 
 	beforeAll(async () => {
+		await deleteAllCartProducts();
 		await deleteAllProducts();
 		await deleteAllCategories();
 		await deleteAllColors();
@@ -31,13 +32,12 @@ describe('get /products', () => {
 		fakeColor.id = (await insertColor(fakeColor.name)).rows[0].id;
 
 		fakeProduct = productFactory(fakeColor.id, fakeCategory.id);
-		fakeProduct2 = productFactory(fakeColor.id, fakeCategory.id);
 
 		await insertProduct(fakeProduct);
-		await insertProduct(fakeProduct2);
 	});
 
 	afterEach(async () => {
+		await deleteAllCartProducts();
 		await deleteAllProducts();
 		await deleteAllCategories();
 		await deleteAllColors();
@@ -51,7 +51,7 @@ describe('get /products', () => {
 		const result = await supertest(server).get(allProducts.route);
 		expect(result.status).toEqual(200);
 		expect(result.body).toHaveProperty('pagesCount');
-		expect(result.body.products.length).toEqual(2);
+		expect(result.body.products.length).toEqual(1);
 		expect(result.body.products[0]).toHaveProperty('id');
 		expect(result.body.products[0]).toHaveProperty('name');
 		expect(result.body.products[0]).toHaveProperty('price');

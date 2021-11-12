@@ -21,8 +21,13 @@ function queryProductById(uuid) {
 	return dbConnection.query(
 		`
 	SELECT 
-	uuid AS id, name, description, price, color_id, image_url, category_id
-	FROM products
+	products.uuid AS id, products.name,
+	products.description, products.price, colors.name AS color,
+	image_url, categories.name AS category
+	FROM products JOIN colors
+		ON products.color_id = colors.id
+	JOIN categories
+		ON products.category_id = categories.id
 	WHERE uuid = $1`,
 		[uuid]
 	);
@@ -47,10 +52,17 @@ const insertProduct = (product) =>
 
 const deleteAllProducts = () => dbConnection.query('DELETE FROM products;');
 
+function getProductIdByUuid(uuid) {
+	return dbConnection.query('SELECT id FROM products WHERE uuid = $1', [
+		uuid,
+	]);
+}
+
 export {
 	queryProducts,
 	queryCount,
 	queryProductById,
 	insertProduct,
 	deleteAllProducts,
+	getProductIdByUuid,
 };

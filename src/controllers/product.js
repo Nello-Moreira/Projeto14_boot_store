@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { internalErrorResponse } from '../helpers/helpers.js';
 import { queryProductById } from '../data/productsTable.js';
 import validateUuid from '../validations/uuidValidation.js';
@@ -8,7 +9,6 @@ async function getProductById(req, res) {
 	const uuid = req.params.id;
 
 	const validation = validateUuid(uuid);
-
 	if (validation.error) {
 		return res.sendStatus(400);
 	}
