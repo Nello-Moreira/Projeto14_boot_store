@@ -1,14 +1,14 @@
 import supertest from 'supertest';
 import server from '../src/server.js';
 import endConnection from '../src/helpers/endConnection.js';
-import carts from '../src/controllers/carts.js';
+import cart from '../src/controllers/cart.js';
 
 import {
 	insertProduct,
 	deleteAllProducts,
 	getProductIdByUuid,
 } from '../src/data/productsTable.js';
-import { insertCart, deleteAllCarts } from '../src/data/cartsTable.js';
+import { deleteAllCarts } from '../src/data/cartsTable.js';
 import {
 	deleteAllCartProducts,
 	getCartProduct,
@@ -26,11 +26,6 @@ import colorFactory from './factories/colorFactory.js';
 import productFactory from './factories/productFactory.js';
 import uuidFactory from './factories/uuidFactory.js';
 import stringFactory from './factories/stringFactory.js';
-import openCartFactory from './factories/cartFactory.js';
-import {
-	cartProductFactory,
-	incorrectCartProductFactory,
-} from './factories/cartProductFactory.js';
 import userFactory from './factories/userFactory.js';
 import sessionFactory from './factories/sessionFactory.js';
 
@@ -38,14 +33,13 @@ afterAll(() => {
 	endConnection();
 });
 
-describe('post /carts/:id', () => {
+describe('post /cartProducts', () => {
 	const fakeColor = colorFactory();
 	const fakeCategory = categoryFactory();
 	let fakeProduct;
 	const fakeUser = userFactory();
 	let fakeSession;
-	let fakeCart;
-	let productId;
+	let body;
 
 	beforeAll(async () => {
 		await deleteAllCartProducts();
@@ -61,13 +55,14 @@ describe('post /carts/:id', () => {
 		fakeProduct = productFactory(fakeColor.id, fakeCategory.id);
 		fakeUser.id = (await insertUser(fakeUser)).rows[0].id;
 		fakeSession = sessionFactory(fakeUser.id);
-		fakeCart = openCartFactory(fakeUser.id);
-		fakeCart.id = (await insertCart(fakeCart)).rows[0].id;
+		body = { uuid: fakeProduct.uuid };
 
 		await insertProduct(fakeProduct);
-		await insertSession(fakeSession);
+		await insertSession(fakeSession.user_id, fakeSession.token);
 
-		productId = (await getProductIdByUuid(fakeProduct.uuid)).rows[0].id;
+		fakeProduct.id = (
+			await getProductIdByUuid(fakeProduct.uuid)
+		).rows[0].id;
 	});
 
 	afterAll(async () => {
@@ -82,58 +77,51 @@ describe('post /carts/:id', () => {
 
 	it('returns 400 when a non-uuid type is passed', async () => {
 		const result = await supertest(server)
-			.post(carts.route.replace(':id', fakeCart.uuid))
+			.post(cart.route)
+			.send(body)
 			.set('Authorization', `Bearer ${stringFactory()}`);
 		expect(result.status).toEqual(400);
 	});
 
 	it('returns 401 when no token is passed', async () => {
-		const fakeCartProduct = cartProductFactory(fakeCart.id, productId);
-
-		const result = await supertest(server)
-			.post(carts.route.replace(':id', fakeCart.uuid))
-			.send(fakeCartProduct);
+		const result = await supertest(server).post(cart.route).send(body);
 		expect(result.status).toEqual(401);
 	});
 
 	it('returns 401 when an incorrect token is passed', async () => {
 		const incorrectToken = uuidFactory();
-		const fakeCartProduct = cartProductFactory(fakeCart.id, productId);
 		const result = await supertest(server)
-			.post(carts.route.replace(':id', fakeCart.uuid))
-			.send(fakeCartProduct)
+			.post(cart.route)
+			.send(body)
 			.set('Authorization', `Bearer ${incorrectToken}`);
 		expect(result.status).toEqual(401);
 	});
 
-	it('returns 400 when an incorrect product is added to the cart', async () => {
-		const incorrectFakeCartProduct = incorrectCartProductFactory(
-			fakeCart.id,
-			productId
-		);
-
+	it('returns 400 when a non-uuid is sent in the body', async () => {
 		const result = await supertest(server)
-			.post(carts.route.replace(':id', fakeCart.uuid))
-			.send(incorrectFakeCartProduct)
+			.post(cart.route)
+			.send({ uuid: stringFactory() })
 			.set('Authorization', `Bearer ${fakeSession.token}`);
 		expect(result.status).toEqual(400);
 	});
 
-	it('returns 200 and adds a product to the cart when it is an existent product', async () => {
-		const fakeCartProduct = cartProductFactory(fakeCart.id, productId);
-
+	it('returns 404 when a non-existent uuid is sent in the body', async () => {
 		const result = await supertest(server)
-			.post(carts.route.replace(':id', fakeCart.uuid))
-			.send(fakeCartProduct)
+			.post(cart.route)
+			.send({ uuid: uuidFactory() })
 			.set('Authorization', `Bearer ${fakeSession.token}`);
-		const registeredProduct = await getCartProduct(productId, fakeCart.id);
+		expect(result.status).toEqual(404);
+	});
+
+	it('returns 200 when a correct product is sent in the body', async () => {
+		const result = await supertest(server)
+			.post(cart.route)
+			.send(body)
+			.set('Authorization', `Bearer ${fakeSession.token}`);
 		expect(result.status).toEqual(200);
-		expect(!!registeredProduct.rowCount).toEqual(true);
-		expect(registeredProduct.rows[0]).toHaveProperty('id');
-		expect(registeredProduct.rows[0]).toHaveProperty('cart_id');
-		expect(registeredProduct.rows[0]).toHaveProperty('products_id');
-		expect(registeredProduct.rows[0]).toHaveProperty('product_quantity');
-		expect(registeredProduct.rows[0]).toHaveProperty('product_price');
-		expect(registeredProduct.rows[0]).toHaveProperty('removed_at');
+
+		const cartProductResult = await getCartProduct(fakeProduct.id);
+		expect(cartProductResult.rowCount).toEqual(1);
+		expect(cartProductResult.rows[0].products_id).toEqual(fakeProduct.id);
 	});
 });

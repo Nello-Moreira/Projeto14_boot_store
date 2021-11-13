@@ -37,7 +37,10 @@ const deleteSession = (id, token) =>
 const deleteAllSessions = () => dbConnection.query('DELETE FROM sessions;');
 
 function getToken(token) {
-	return dbConnection.query('SELECT FROM sessions WHERE token = $1', [token]);
+	return dbConnection.query(
+		'SELECT users.* FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.token = $1',
+		[token]
+	);
 }
 
 export {

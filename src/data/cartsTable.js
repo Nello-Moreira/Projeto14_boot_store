@@ -1,4 +1,4 @@
-import dbConnection from './connection';
+import dbConnection from './connection.js';
 
 function insertCart(cart) {
 	return dbConnection.query(
@@ -14,4 +14,17 @@ function deleteAllCarts() {
 	return dbConnection.query('DELETE FROM carts;');
 }
 
-export { insertCart, deleteAllCarts };
+function getCart(userId) {
+	return dbConnection.query('SELECT * FROM carts WHERE user_id = $1', [
+		userId,
+	]);
+}
+
+function queryOpenCart(userId) {
+	return dbConnection.query(
+		'SELECT * FROM carts WHERE user_id = $1 AND payment_date IS NULL',
+		[userId]
+	);
+}
+
+export { insertCart, deleteAllCarts, getCart, queryOpenCart };

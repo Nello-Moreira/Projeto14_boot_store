@@ -20,7 +20,8 @@ function queryCount() {
 function queryProductById(uuid) {
 	return dbConnection.query(
 		`
-	SELECT 
+	SELECT
+	products.id AS real_id,
 	products.uuid AS id, products.name,
 	products.description, products.price, colors.name AS color,
 	image_url, categories.name AS category
