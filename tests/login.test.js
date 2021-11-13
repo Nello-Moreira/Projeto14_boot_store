@@ -8,11 +8,7 @@ import {
 	insertSession,
 	deleteAllSessions,
 } from '../src/data/sessionsTable.js';
-import {
-	searchUserByParam,
-	insertUser,
-	deleteAllUsers,
-} from '../src/data/usersTable.js';
+import { insertUser, deleteAllUsers } from '../src/data/usersTable.js';
 
 import userFactory from './factories/userFactory.js';
 import uuidFactory from './factories/uuidFactory.js';
@@ -45,6 +41,7 @@ describe('post /login', () => {
 
 	afterAll(async () => {
 		await deleteAllSessions();
+		await deleteAllUsers();
 		endConnection();
 	});
 
