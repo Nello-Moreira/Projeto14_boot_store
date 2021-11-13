@@ -34,5 +34,7 @@ server.post(logout.route, logout.postLogout);
 
 server.get(cart.route, cart.getCart);
 server.post(cart.route, cart.insertProduct);
+server.delete(`${cart.route}/:id`, cart.deleteProductInCart);
+server.put(cart.route, cart.updateQuantity);
 
 export default server;

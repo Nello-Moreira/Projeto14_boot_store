@@ -33,7 +33,7 @@ afterAll(() => {
 	endConnection();
 });
 
-describe('post /cartProducts', () => {
+describe('post /cart', () => {
 	const fakeColor = colorFactory();
 	const fakeCategory = categoryFactory();
 	let fakeProduct;

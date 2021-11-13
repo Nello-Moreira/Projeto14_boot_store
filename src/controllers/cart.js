@@ -7,6 +7,8 @@ import validateUuid from '../validations/uuidValidation.js';
 import {
 	insertCartProduct,
 	getAllProductsInCart,
+	removeProductFromCart,
+	changeProductQuantity,
 } from '../data/cartsProductsTable.js';
 
 const route = '/cart';
@@ -97,5 +99,88 @@ async function insertProduct(req, res) {
 	}
 }
 
-const cart = { route, getCart, insertProduct };
+async function deleteProductInCart(req, res) {
+	const token = req.headers.authorization?.replace('Bearer ', '');
+	const tokenValidation = validateUuid(token);
+	if (tokenValidation.error) {
+		return res.sendStatus(400);
+	}
+	const productUuid = req.params.id;
+	try {
+		if (!token) {
+			return res.sendStatus(401);
+		}
+		const result = await getToken(token);
+		if (!result.rowCount) {
+			return res.sendStatus(401);
+		}
+		const bodyValidation = validateUuid(productUuid);
+		if (bodyValidation.error) {
+			return res
+				.status(400)
+				.send(bodyValidation.error.details[0].message);
+		}
+
+		const productResult = await queryProductById(productUuid);
+		if (!productResult.rowCount) {
+			return res.status(404).send(`Product doesn't exist`);
+		}
+
+		await removeProductFromCart(productResult.rows[0].real_id);
+		const openCart = await queryOpenCart(result.rows[0].id);
+		const cartId = openCart.rows[0].id;
+		const products = await getAllProductsInCart(cartId);
+		return res.send(products.rows);
+	} catch (error) {
+		return internalErrorResponse(res, error);
+	}
+}
+
+async function updateQuantity(req, res) {
+	const token = req.headers.authorization?.replace('Bearer ', '');
+	const tokenValidation = validateUuid(token);
+	if (tokenValidation.error) {
+		return res.sendStatus(400);
+	}
+
+	try {
+		if (!token) {
+			return res.sendStatus(401);
+		}
+		const result = await getToken(token);
+		if (!result.rowCount) {
+			return res.sendStatus(401);
+		}
+		const bodyValidation = validateUuid(req.body.uuid);
+		if (bodyValidation.error) {
+			return res
+				.status(400)
+				.send(bodyValidation.error.details[0].message);
+		}
+
+		const productResult = await queryProductById(req.body.uuid);
+		if (!productResult.rowCount) {
+			return res.status(404).send(`Product doesn't exist`);
+		}
+
+		await changeProductQuantity(
+			productResult.rows[0].real_id,
+			req.body.quantity
+		);
+		const openCart = await queryOpenCart(result.rows[0].id);
+		const cartId = openCart.rows[0].id;
+		const products = await getAllProductsInCart(cartId);
+		return res.send(products.rows);
+	} catch (error) {
+		return internalErrorResponse(res, error);
+	}
+}
+
+const cart = {
+	route,
+	getCart,
+	insertProduct,
+	deleteProductInCart,
+	updateQuantity,
+};
 export default cart;
