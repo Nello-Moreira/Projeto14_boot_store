@@ -38,7 +38,7 @@ const postLogin = async (request, response) => {
 		await insertSession(existingUser.rows[0].id, token);
 
 		return response.status(200).send({
-			userId: existingUser.rows[0].uuid,
+			id: existingUser.rows[0].uuid,
 			token,
 			name: existingUser.rows[0].name,
 			avatarUrl: existingUser.rows[0].avatar_url,
