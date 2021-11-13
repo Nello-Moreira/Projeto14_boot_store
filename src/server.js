@@ -8,6 +8,8 @@ import categoryProducts from './controllers/categoryProducts.js';
 import allProducts from './controllers/allProducts.js';
 import product from './controllers/product.js';
 import signUp from './controllers/signUp.js';
+import login from './controllers/login.js';
+import logout from './controllers/logout.js';
 import cart from './controllers/cart.js';
 
 const server = express();
@@ -26,8 +28,11 @@ server.get(product.route, product.getProductById);
 
 server.post(signUp.route, signUp.postSignUp);
 
-server.post(cart.route, cart.insertProduct);
+server.post(login.route, login.postLogin);
+
+server.post(logout.route, logout.postLogout);
 
 server.get(cart.route, cart.getCart);
+server.post(cart.route, cart.insertProduct);
 
 export default server;

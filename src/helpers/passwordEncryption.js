@@ -5,8 +5,8 @@ function hashPassword(password) {
 	return bcrypt.hashSync(password, salt);
 }
 
-function comparePassword(password, hashedPassword) {
+function isCorrectPassword(password, hashedPassword) {
 	return bcrypt.compareSync(password, hashedPassword);
 }
 
-export { hashPassword, comparePassword };
+export { hashPassword, isCorrectPassword };

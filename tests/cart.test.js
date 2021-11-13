@@ -58,7 +58,7 @@ describe('post /cartProducts', () => {
 		body = { uuid: fakeProduct.uuid };
 
 		await insertProduct(fakeProduct);
-		await insertSession(fakeSession);
+		await insertSession(fakeSession.user_id, fakeSession.token);
 
 		fakeProduct.id = (
 			await getProductIdByUuid(fakeProduct.uuid)

@@ -1,3 +1,5 @@
+import { searchSession } from '../data/sessionsTable.js';
+
 const productsPerPage = 16;
 
 const getOffset = (page = 1) => productsPerPage * (page - 1);
@@ -12,9 +14,16 @@ const internalErrorResponse = (response, error) => {
 const createRandomInteger = (min, max) =>
 	Math.floor(Math.random() * (max - min)) + min;
 
+const isValidSession = async (userId, token) => {
+	const existingSession = await searchSession(userId, token);
+	if (existingSession.rowCount === 1) return true;
+	return false;
+};
+
 export {
 	productsPerPage,
 	getOffset,
 	internalErrorResponse,
 	createRandomInteger,
+	isValidSession,
 };
