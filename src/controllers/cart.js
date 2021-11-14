@@ -89,7 +89,7 @@ async function insertProduct(req, res) {
 		if (
 			productsInCart.rows.some((product) => product.real_id === productId)
 		) {
-			return res.status(409).send('Product already in cart');
+			return res.send();
 		}
 		const cartProduct = {
 			cart_id: cartId,
