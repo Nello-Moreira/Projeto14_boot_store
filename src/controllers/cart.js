@@ -84,6 +84,13 @@ async function insertProduct(req, res) {
 			cartId = openCart.rows[0].id;
 		}
 
+		const productsInCart = await getAllProductsInCart(cartId);
+
+		if (
+			productsInCart.rows.some((product) => product.real_id === productId)
+		) {
+			return res.status(409).send('Product already in cart');
+		}
 		const cartProduct = {
 			cart_id: cartId,
 			products_id: productId,

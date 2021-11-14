@@ -1,7 +1,7 @@
 import { internalErrorResponse } from '../helpers/helpers.js';
 import validateUuid from '../validations/uuidValidation.js';
 import { getToken } from '../data/sessionsTable.js';
-import { getCart, closeCart } from '../data/cartsTable.js';
+import { closeCart, getOpenCart } from '../data/cartsTable.js';
 
 const route = '/checkout';
 
@@ -20,7 +20,7 @@ async function finishOrder(req, res) {
 		if (!result.rowCount) {
 			return res.sendStatus(401);
 		}
-		const cart = await getCart(result.rows[0].id);
+		const cart = await getOpenCart(result.rows[0].id);
 		if (!cart.rowCount) {
 			return res.status(404).send(`this cart doesn't exist`);
 		}

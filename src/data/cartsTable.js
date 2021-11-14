@@ -30,8 +30,22 @@ function queryOpenCart(userId) {
 function closeCart(cartId) {
 	return dbConnection.query(
 		'UPDATE carts SET payment_date = now() WHERE id = $1',
-		cartId
+		[cartId]
 	);
 }
 
-export { insertCart, deleteAllCarts, getCart, queryOpenCart, closeCart };
+function getOpenCart(userId) {
+	return dbConnection.query(
+		'SELECT * FROM carts WHERE user_id = $1 AND payment_date IS NULL',
+		[userId]
+	);
+}
+
+export {
+	insertCart,
+	deleteAllCarts,
+	getCart,
+	queryOpenCart,
+	closeCart,
+	getOpenCart,
+};
