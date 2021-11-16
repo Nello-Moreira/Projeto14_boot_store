@@ -44,7 +44,11 @@ function getAllProductsInCart(cartId) {
 function removeProductFromCart(productId) {
 	return dbConnection.query(
 		`
-		UPDATE carts_products SET removed_at = now() WHERE products_id = $1
+		UPDATE carts_products
+		SET removed_at = now()
+		FROM carts
+		WHERE carts_products.cart_id = carts.id AND
+		products_id = $1 AND carts.payment_date IS NULL
 	`,
 		[productId]
 	);
@@ -53,9 +57,34 @@ function removeProductFromCart(productId) {
 function changeProductQuantity(productId, productQuantity) {
 	return dbConnection.query(
 		`
-		UPDATE carts_products SET product_quantity = $1 WHERE products_id = $2
+		UPDATE carts_products
+		SET product_quantity = $1
+		FROM carts
+		WHERE carts_products.cart_id = carts.id AND
+		products_id = $2 AND carts.payment_date IS NULL
 	`,
 		[productQuantity, productId]
+	);
+}
+
+function searchAllUserOrders(token) {
+	return dbConnection.query(
+		`
+		SELECT
+			products.uuid AS "productId", products.name, carts_products.product_quantity AS quantity, carts_products.product_price AS price, products.image_url, carts.payment_date AS "purchaseDate"
+		FROM carts_products
+		JOIN products ON carts_products.products_id = products.id
+		JOIN carts ON carts_products.cart_id = carts.id
+		JOIN users ON carts.user_id = users.id
+		JOIN sessions ON sessions.user_id = users.id
+		WHERE
+			carts_products.removed_at IS NULL AND
+			carts.payment_date IS NOT NULL AND
+			sessions.token = $1
+		ORDER BY "purchaseDate" DESC
+		;
+	`,
+		[token]
 	);
 }
 
@@ -66,4 +95,5 @@ export {
 	getAllProductsInCart,
 	removeProductFromCart,
 	changeProductQuantity,
+	searchAllUserOrders,
 };
