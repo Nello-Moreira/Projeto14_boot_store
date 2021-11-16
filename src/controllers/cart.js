@@ -2,9 +2,9 @@ import { v4 as uuid } from 'uuid';
 import { internalErrorResponse } from '../helpers/helpers.js';
 import { insertCart, queryOpenCart } from '../data/cartsTable.js';
 import { queryProductById } from '../data/productsTable.js';
-import { getToken } from '../data/sessionsTable.js';
 import validateUuid from '../validations/uuidValidation.js';
 import validateProduct from '../validations/productValidation.js';
+import auth from '../middlewares/auth.js';
 import {
 	insertCartProduct,
 	getAllProductsInCart,
@@ -15,19 +15,10 @@ import {
 const route = '/cart';
 
 async function getCart(req, res) {
-	const token = req.headers.authorization?.replace('Bearer ', '');
-	const tokenValidation = validateUuid(token);
-	if (tokenValidation.error) {
-		return res.sendStatus(400);
-	}
-
 	try {
-		if (!token) {
-			return res.sendStatus(401);
-		}
-		const result = await getToken(token);
-		if (!result.rowCount) {
-			return res.sendStatus(401);
+		const { result, statusCode } = await auth(req, res);
+		if (statusCode) {
+			return res.sendStatus(statusCode);
 		}
 
 		const openCart = await queryOpenCart(result.rows[0].id);
@@ -44,19 +35,12 @@ async function getCart(req, res) {
 }
 
 async function insertProduct(req, res) {
-	const token = req.headers.authorization?.replace('Bearer ', '');
-	const tokenValidation = validateUuid(token);
-	if (tokenValidation.error) {
-		return res.sendStatus(400);
-	}
 	try {
-		if (!token) {
-			return res.sendStatus(401);
+		const { result, statusCode } = await auth(req, res);
+		if (statusCode) {
+			return res.sendStatus(statusCode);
 		}
-		const result = await getToken(token);
-		if (!result.rowCount) {
-			return res.sendStatus(401);
-		}
+
 		const bodyValidation = validateProduct(req.body);
 		if (bodyValidation.error) {
 			return res
@@ -108,20 +92,14 @@ async function insertProduct(req, res) {
 }
 
 async function deleteProductInCart(req, res) {
-	const token = req.headers.authorization?.replace('Bearer ', '');
-	const tokenValidation = validateUuid(token);
-	if (tokenValidation.error) {
-		return res.sendStatus(400);
-	}
 	const productUuid = req.params.id;
+
 	try {
-		if (!token) {
-			return res.sendStatus(401);
+		const { result, statusCode } = await auth(req, res);
+		if (statusCode) {
+			return res.sendStatus(statusCode);
 		}
-		const result = await getToken(token);
-		if (!result.rowCount) {
-			return res.sendStatus(401);
-		}
+
 		const bodyValidation = validateUuid(productUuid);
 		if (bodyValidation.error) {
 			return res
@@ -145,20 +123,12 @@ async function deleteProductInCart(req, res) {
 }
 
 async function updateQuantity(req, res) {
-	const token = req.headers.authorization?.replace('Bearer ', '');
-	const tokenValidation = validateUuid(token);
-	if (tokenValidation.error) {
-		return res.sendStatus(400);
-	}
-
 	try {
-		if (!token) {
-			return res.sendStatus(401);
+		const { result, statusCode } = await auth(req, res);
+		if (statusCode) {
+			return res.sendStatus(statusCode);
 		}
-		const result = await getToken(token);
-		if (!result.rowCount) {
-			return res.sendStatus(401);
-		}
+
 		const bodyValidation = validateUuid(req.body.uuid);
 		if (bodyValidation.error) {
 			return res

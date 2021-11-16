@@ -5,6 +5,7 @@ export default function userFactory() {
 	const name = faker.name.firstName();
 
 	return {
+		id: null,
 		uuid: faker.datatype.uuid(),
 		name,
 		email: faker.internet.email(name),
