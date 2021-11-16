@@ -67,7 +67,7 @@ function searchAllUserOrders(token) {
 	return dbConnection.query(
 		`
 		SELECT
-			products.uuid AS "productId", products.name, carts_products.product_quantity AS quantity, carts_products.product_price AS price, products.image_url
+			products.uuid AS "productId", products.name, carts_products.product_quantity AS quantity, carts_products.product_price AS price, products.image_url, carts.payment_date AS "purchaseDate"
 		FROM carts_products
 		JOIN products ON carts_products.products_id = products.id
 		JOIN carts ON carts_products.cart_id = carts.id
@@ -77,6 +77,7 @@ function searchAllUserOrders(token) {
 			carts_products.removed_at IS NULL AND
 			carts.payment_date IS NOT NULL AND
 			sessions.token = $1
+		ORDER BY "purchaseDate" DESC
 		;
 	`,
 		[token]
