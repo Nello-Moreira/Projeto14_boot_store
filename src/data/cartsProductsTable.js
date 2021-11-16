@@ -57,7 +57,11 @@ function removeProductFromCart(productId) {
 function changeProductQuantity(productId, productQuantity) {
 	return dbConnection.query(
 		`
-		UPDATE carts_products SET product_quantity = $1 WHERE products_id = $2
+		UPDATE carts_products
+		SET product_quantity = $1
+		FROM carts
+		WHERE carts_products.cart_id = carts.id AND
+		products_id = $2 AND carts.payment_date IS NULL
 	`,
 		[productQuantity, productId]
 	);
