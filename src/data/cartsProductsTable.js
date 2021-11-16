@@ -30,11 +30,32 @@ function getCartProduct(productId) {
 function getAllProductsInCart(cartId) {
 	return dbConnection.query(
 		`
-	SELECT carts_products.* FROM carts_products JOIN carts
-	ON carts.id = carts_products.cart_id
-	WHERE carts_products.cart_id = $1
+	SELECT products.id AS real_id, products.uuid AS id, products.name,
+	carts_products.product_price AS price, products.image_url,
+	carts_products.product_quantity AS "productQuantity"
+	FROM products JOIN carts_products
+	ON products.id = carts_products.products_id
+	WHERE carts_products.cart_id = $1 AND carts_products.removed_at IS NULL
 	`,
 		[cartId]
+	);
+}
+
+function removeProductFromCart(productId) {
+	return dbConnection.query(
+		`
+		UPDATE carts_products SET removed_at = now() WHERE products_id = $1
+	`,
+		[productId]
+	);
+}
+
+function changeProductQuantity(productId, productQuantity) {
+	return dbConnection.query(
+		`
+		UPDATE carts_products SET product_quantity = $1 WHERE products_id = $2
+	`,
+		[productQuantity, productId]
 	);
 }
 
@@ -43,4 +64,6 @@ export {
 	deleteAllCartProducts,
 	getCartProduct,
 	getAllProductsInCart,
+	removeProductFromCart,
+	changeProductQuantity,
 };

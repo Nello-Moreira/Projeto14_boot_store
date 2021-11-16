@@ -11,6 +11,7 @@ import signUp from './controllers/signUp.js';
 import login from './controllers/login.js';
 import logout from './controllers/logout.js';
 import cart from './controllers/cart.js';
+import checkout from './controllers/checkout.js';
 
 const server = express();
 server.use(cors());
@@ -33,6 +34,13 @@ server.post(login.route, login.postLogin);
 server.post(logout.route, logout.postLogout);
 
 server.get(cart.route, cart.getCart);
+
 server.post(cart.route, cart.insertProduct);
+
+server.delete(`${cart.route}/:id`, cart.deleteProductInCart);
+
+server.put(cart.route, cart.updateQuantity);
+
+server.post(checkout.route, checkout.finishOrder);
 
 export default server;

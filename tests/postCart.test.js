@@ -29,18 +29,18 @@ import stringFactory from './factories/stringFactory.js';
 import userFactory from './factories/userFactory.js';
 import sessionFactory from './factories/sessionFactory.js';
 
+const fakeColor = colorFactory();
+const fakeCategory = categoryFactory();
+const fakeUser = userFactory();
+let fakeProduct;
+let fakeSession;
+
 afterAll(() => {
 	endConnection();
 });
 
-describe('post /cartProducts', () => {
-	const fakeColor = colorFactory();
-	const fakeCategory = categoryFactory();
-	let fakeProduct;
-	const fakeUser = userFactory();
-	let fakeSession;
+describe('post /cart', () => {
 	let body;
-
 	beforeAll(async () => {
 		await deleteAllCartProducts();
 		await deleteAllProducts();
@@ -114,6 +114,18 @@ describe('post /cartProducts', () => {
 	});
 
 	it('returns 200 when a correct product is sent in the body', async () => {
+		const result = await supertest(server)
+			.post(cart.route)
+			.send(body)
+			.set('Authorization', `Bearer ${fakeSession.token}`);
+		expect(result.status).toEqual(200);
+
+		const cartProductResult = await getCartProduct(fakeProduct.id);
+		expect(cartProductResult.rowCount).toEqual(1);
+		expect(cartProductResult.rows[0].products_id).toEqual(fakeProduct.id);
+	});
+
+	it('returns 200 when an already added product is sent', async () => {
 		const result = await supertest(server)
 			.post(cart.route)
 			.send(body)
