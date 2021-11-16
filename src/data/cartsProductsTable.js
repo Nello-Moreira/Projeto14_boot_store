@@ -44,7 +44,11 @@ function getAllProductsInCart(cartId) {
 function removeProductFromCart(productId) {
 	return dbConnection.query(
 		`
-		UPDATE carts_products SET removed_at = now() WHERE products_id = $1
+		UPDATE carts_products
+		SET removed_at = now()
+		FROM carts
+		WHERE carts_products.cart_id = carts.id AND
+		products_id = $1 AND carts.payment_date IS NULL
 	`,
 		[productId]
 	);

@@ -17,9 +17,9 @@ import stringFactory from './factories/stringFactory';
 
 describe('get /category/:name', () => {
 	const fakeColor = colorFactory();
-	const fakeCategory = { name: stringFactory() };
-	const fakeCategory2 = { name: stringFactory() };
-	const fakeCategory3 = { name: stringFactory() };
+	const fakeCategory = { id: null, name: stringFactory() };
+	const fakeCategory2 = { id: null, name: stringFactory() };
+	const fakeCategory3 = { id: null, name: stringFactory() };
 
 	let fakeProduct;
 	let fakeProduct2;

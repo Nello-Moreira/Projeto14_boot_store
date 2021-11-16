@@ -1,11 +1,10 @@
 import Joi from 'joi';
 
 const schema = Joi.object({
-	cart_id: Joi.number().integer().required(),
-	products_id: Joi.number().integer().required(),
-	product_quantity: Joi.number().integer().required(),
-	product_price: Joi.number().positive().required(),
-	removed_at: Joi.date().allow(null),
+	uuid: Joi.string()
+		.guid({ version: ['uuidv4'] })
+		.required(),
+	quantity: Joi.number().integer().positive().min(1).required(),
 });
 
 function validateProduct(product) {

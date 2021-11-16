@@ -3,6 +3,7 @@ faker.locale = 'pt_BR';
 
 export default function productFactory(colorId, CategoryId) {
 	return {
+		id: null,
 		uuid: faker.datatype.uuid(),
 		name: faker.commerce.productName(),
 		description: faker.commerce.productDescription(),
