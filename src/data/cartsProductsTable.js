@@ -63,7 +63,7 @@ function searchAllUserOrders(token) {
 	return dbConnection.query(
 		`
 		SELECT
-			products.uuid AS productId, products.name, carts_products.product_quantity AS quantity, carts_products.product_price AS price, products.image_url
+			products.uuid AS "productId", products.name, carts_products.product_quantity AS quantity, carts_products.product_price AS price, products.image_url
 		FROM carts_products
 		JOIN products ON carts_products.products_id = products.id
 		JOIN carts ON carts_products.cart_id = carts.id
