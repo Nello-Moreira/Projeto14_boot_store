@@ -12,6 +12,7 @@ import login from './controllers/login.js';
 import logout from './controllers/logout.js';
 import cart from './controllers/cart.js';
 import checkout from './controllers/checkout.js';
+import history from './controllers/history.js';
 
 const server = express();
 server.use(cors());
@@ -42,5 +43,7 @@ server.delete(`${cart.route}/:id`, cart.deleteProductInCart);
 server.put(cart.route, cart.updateQuantity);
 
 server.post(checkout.route, checkout.finishOrder);
+
+server.get(history.route, history.getHistory);
 
 export default server;

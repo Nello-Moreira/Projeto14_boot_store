@@ -59,6 +59,26 @@ function changeProductQuantity(productId, productQuantity) {
 	);
 }
 
+function searchAllUserOrders(token) {
+	return dbConnection.query(
+		`
+		SELECT
+			products.uuid AS productId, products.name, carts_products.product_quantity AS quantity, carts_products.product_price AS price, products.image_url
+		FROM carts_products
+		JOIN products ON carts_products.products_id = products.id
+		JOIN carts ON carts_products.cart_id = carts.id
+		JOIN users ON carts.user_id = users.id
+		JOIN sessions ON sessions.user_id = users.id
+		WHERE
+			carts_products.removed_at IS NULL AND
+			carts.payment_date IS NOT NULL AND
+			sessions.token = $1
+		;
+	`,
+		[token]
+	);
+}
+
 export {
 	insertCartProduct,
 	deleteAllCartProducts,
@@ -66,4 +86,5 @@ export {
 	getAllProductsInCart,
 	removeProductFromCart,
 	changeProductQuantity,
+	searchAllUserOrders,
 };
