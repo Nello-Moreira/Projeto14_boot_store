@@ -36,6 +36,7 @@ function getAllProductsInCart(cartId) {
 	FROM products JOIN carts_products
 	ON products.id = carts_products.products_id
 	WHERE carts_products.cart_id = $1 AND carts_products.removed_at IS NULL
+	ORDER BY products.id;
 	`,
 		[cartId]
 	);
