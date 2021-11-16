@@ -4,6 +4,7 @@ import { insertCart, queryOpenCart } from '../data/cartsTable.js';
 import { queryProductById } from '../data/productsTable.js';
 import { getToken } from '../data/sessionsTable.js';
 import validateUuid from '../validations/uuidValidation.js';
+import validateProduct from '../validations/productValidation.js';
 import {
 	insertCartProduct,
 	getAllProductsInCart,
@@ -56,7 +57,7 @@ async function insertProduct(req, res) {
 		if (!result.rowCount) {
 			return res.sendStatus(401);
 		}
-		const bodyValidation = validateUuid(req.body.uuid);
+		const bodyValidation = validateProduct(req.body);
 		if (bodyValidation.error) {
 			return res
 				.status(400)
@@ -94,7 +95,7 @@ async function insertProduct(req, res) {
 		const cartProduct = {
 			cart_id: cartId,
 			products_id: productId,
-			product_quantity: 1,
+			product_quantity: req.body.quantity,
 			product_price: productPrice,
 			removed_at: null,
 		};
