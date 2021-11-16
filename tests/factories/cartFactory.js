@@ -3,6 +3,7 @@ faker.locale = 'pt_BR';
 
 function openCartFactory(userId) {
 	return {
+		id: null,
 		uuid: faker.datatype.uuid(),
 		user_id: userId,
 		payment_date: null,
@@ -11,6 +12,7 @@ function openCartFactory(userId) {
 
 function closedCartFactory(userId) {
 	return {
+		id: null,
 		uuid: faker.datatype.uuid(),
 		user_id: userId,
 		payment_date: faker.date.soon(),

@@ -28,6 +28,7 @@ import uuidFactory from './factories/uuidFactory.js';
 import stringFactory from './factories/stringFactory.js';
 import userFactory from './factories/userFactory.js';
 import sessionFactory from './factories/sessionFactory.js';
+import { createRandomInteger } from '../src/helpers/helpers.js';
 
 const fakeColor = colorFactory();
 const fakeCategory = categoryFactory();
@@ -55,7 +56,7 @@ describe('post /cart', () => {
 		fakeProduct = productFactory(fakeColor.id, fakeCategory.id);
 		fakeUser.id = (await insertUser(fakeUser)).rows[0].id;
 		fakeSession = sessionFactory(fakeUser.id);
-		body = { uuid: fakeProduct.uuid };
+		body = { uuid: fakeProduct.uuid, quantity: createRandomInteger(1, 10) };
 
 		await insertProduct(fakeProduct);
 		await insertSession(fakeSession.user_id, fakeSession.token);
@@ -97,10 +98,10 @@ describe('post /cart', () => {
 		expect(result.status).toEqual(401);
 	});
 
-	it('returns 400 when a non-uuid is sent in the body', async () => {
+	it('returns 400 when an incorrect body is sent', async () => {
 		const result = await supertest(server)
 			.post(cart.route)
-			.send({ uuid: stringFactory() })
+			.send({ uuid: stringFactory(), quantity: uuidFactory() })
 			.set('Authorization', `Bearer ${fakeSession.token}`);
 		expect(result.status).toEqual(400);
 	});
@@ -108,7 +109,7 @@ describe('post /cart', () => {
 	it('returns 404 when a non-existent uuid is sent in the body', async () => {
 		const result = await supertest(server)
 			.post(cart.route)
-			.send({ uuid: uuidFactory() })
+			.send({ uuid: uuidFactory(), quantity: createRandomInteger(1, 10) })
 			.set('Authorization', `Bearer ${fakeSession.token}`);
 		expect(result.status).toEqual(404);
 	});
@@ -125,7 +126,7 @@ describe('post /cart', () => {
 		expect(cartProductResult.rows[0].products_id).toEqual(fakeProduct.id);
 	});
 
-	it('returns 200 when an already added product is sent', async () => {
+	it('returns 200 when an already added product is sent in the body', async () => {
 		const result = await supertest(server)
 			.post(cart.route)
 			.send(body)
